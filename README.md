@@ -90,8 +90,8 @@ Este proyecto cuenta con un **Project en GitHub** para registrar:
 ### 1️⃣ Levantar el proyecto en local
 
 ```bash
-git clone git@github.com:tu-usuario/tu-repo.git
-cd tu-repo
+git clone git@github.com:sergiorioscomar/blog.git
+cd blog
 docker-compose up -d --build
 ```
 
