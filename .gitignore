@@ -27,3 +27,5 @@ postgres_data/
 .idea/
 *.swp
 *~
+# Ignorar configuración local de Django
+django_project/config/settings/local.py
