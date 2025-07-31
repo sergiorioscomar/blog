@@ -1,7 +1,7 @@
-# 📝 Blog en Django - Esencial TIC
+# 📝 Blog en Django - "Grupo XIV noche"
 
 Proyecto **Blog en Django** desplegado en un **VPS con Docker**.  
-Este blog forma parte de los proyectos de **Esencial TIC** y se encuentra disponible en:
+Este blog forma parte de los proyectos de **Informatorio chaco** comision 2, grupo:"Grupo XIV noche" y se encuentra disponible en:
 
 **🌐 Producción:** [http://esencialtic.com.ar:8000/blog](http://esencialtic.com.ar:8000/blog)
 
@@ -132,7 +132,7 @@ docker exec -it web python manage.py createsuperuser
 
 ## 👨‍💻 Equipo
 
-**Grupo XIV noche** – Proyecto para Informatorio Comisión 2
+**Grupo XIV noche** – Proyecto Informatorio Chaco Comisión 2
 **Sergio Rios**
 **Jose Audicio**
 📧 Contacto: [info@esencialtic.com.ar](mailto:info@esencialtic.com.ar)
