@@ -108,7 +108,7 @@ http://localhost:8000/blog
 
 ```bash
 docker exec -it db mysql -u root -p
-# Contraseña: r00tp455
+# Contraseña: passroot
 #Recordar agregar la configuracion en blog/django_project/config/settings/local o en .env con variables de entorno privadas.
 ```
 
