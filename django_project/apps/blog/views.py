@@ -172,8 +172,8 @@ class PostUpdateView(UpdateView):
     template_name ="post_update_form.html"
     success_url = reverse_lazy("post-list")
 
-# _________________________  Página de inicio pública ___________________
+# Página de inicio pública
 def index(request):
-    # Traer las últimas 3 publicaciones
+    # Traer las últimas 3 publicaciones (ajustá fecha según tu modelo)
     ultimos_posts = Post.objects.order_by('-fecha_creacion')[:3]
     return render(request, 'index.html', {'ultimos_posts': ultimos_posts})
