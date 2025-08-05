@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from blog.models import Post
+from apps.blog.models import Post
 
 def ultimos_posts(request):
     posts = Post.objects.order_by('-fecha_creacion')[:3]
