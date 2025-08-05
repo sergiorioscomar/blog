@@ -24,13 +24,6 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.saludar),
-    path('bienvenida/', views.bienvenida),
-    path('sumar/', views.sumar),
-    path('calcular_edad/', views.calcular_edad),
-
-    path('producto/', views.insertar_producto),
-
-    path('personas/', views.listar_personas),
     # Urls de app blog
     path('blog/', include('apps.blog.urls')),
 
