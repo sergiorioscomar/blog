@@ -93,9 +93,15 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'  # para collectstatic
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',  # si tenés una carpeta "static" propia para css/js
+]
 
 MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / 'media'  # para subir imágenes
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
