@@ -21,18 +21,15 @@ from . import views
 from django.conf import settings
 from django.conf.urls.static import static
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.saludar),
-    path('bienvenida/', views.bienvenida),
-    path('sumar/', views.sumar),
-    path('calcular_edad/', views.calcular_edad),
-
-    path('producto/', views.insertar_producto),
-
-    path('personas/', views.listar_personas),
+    path('', views.inicio),
     # Urls de app blog
     path('blog/', include('apps.blog.urls')),
+
+    # Urls de app api
+    path('api/', include('apps.api.urls')),
 
     # urls de auth_app
     path('accounts/', include('django.contrib.auth.urls')),

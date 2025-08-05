@@ -1,5 +1,7 @@
 
 from django.http import HttpResponse, JsonResponse
+from django.shortcuts import render
 
-def saludar(request):
-    return HttpResponse("<h1>Hola mundo!</h1>")
+
+def inicio(request):
+    return render(request, 'index.html')

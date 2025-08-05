@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block titulo %}Inicio{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+  <!-- Banner principal -->
+  <div class="p-5 mb-4 bg-light rounded-3" style="background-image: url('https://source.unsplash.com/1600x400/?technology,blog'); background-size: cover;">
+    <div class="container-fluid py-5 text-white" style="background-color: rgba(0,0,0,0.4); border-radius: 10px;">
+      <h1 class="display-5 fw-bold">Bienvenido a mi Blog</h1>
+      <p class="col-md-8 fs-4">Descubre lo último en noticias, tecnología y curiosidades.</p>
+      <a class="btn btn-primary btn-lg" href="{% url 'login' %}">Ingresar</a>
+      <a class="btn btn-outline-light btn-lg" href="{% url 'register' %}">Registrarse</a>
+    </div>
+  </div>
+
+  <!-- Últimos posts -->
+  <h2 class="mb-4">Últimos Posts</h2>
+  <div class="row" id="ultimos-posts">
+    <!-- Se llenará con fetch() -->
+  </div>
+
+  <div class="text-center mt-4">
+    <a href="{% url 'post-list' %}" class="btn btn-outline-primary">Ver todos los posts</a>
+  </div>
+
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    fetch("/api/ultimos-posts/")
+      .then(response => response.json())
+      .then(posts => {
+        const container = document.getElementById("ultimos-posts");
+        container.innerHTML = posts.map(p => `
+          <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+              ${p.imagen ? `<img src="${p.imagen}" class="card-img-top" alt="${p.titulo}">` : ''}
+              <div class="card-body">
+                <h5 class="card-title">${p.titulo}</h5>
+                <p class="card-text">${p.descripcion}</p>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      });
+});
+</script>
+{% endblock %}
