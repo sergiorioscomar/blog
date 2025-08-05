@@ -13,7 +13,7 @@ services:
     container_name: db
     restart: always
     ports:
-      - "3306:3306"
+      - "3000:3306"
     environment:
       MYSQL_DATABASE: blog_db
       MYSQL_USER: blog_user
