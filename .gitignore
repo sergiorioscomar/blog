@@ -15,6 +15,7 @@ venv/
 /staticfiles/
 /media/*
 # --- Docker ---
+docker-compose.yml
 docker-compose.override.yml
 Dockerfile
 *.pid
