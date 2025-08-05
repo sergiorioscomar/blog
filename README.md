@@ -133,8 +133,11 @@ docker exec -it web python manage.py createsuperuser
 ## 👨‍💻 Equipo
 
 **Grupo XIV noche** – Proyecto Informatorio Chaco Comisión 2
+
 **Sergio Rios**
+
 **Jose Audicio**
+
 📧 Contacto: [info@esencialtic.com.ar](mailto:info@esencialtic.com.ar)
 
 ---
