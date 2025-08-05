@@ -1,38 +1,75 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block content%}
-    {% if posts.imagen %}
-        <img src="{{ posts.imagen.url }}" alt="" width="200px" height="200px">
-    {% endif %}
-    <h1>{{ posts.titulo }}</h1>
-    <p>{{ posts.fecha_creacion }}</p>
-    <p>{{ posts.contenido }}</p>
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
 
-    
-        {% if user.is_authenticated and user == posts.autor %}
-                <h2><a href="{% url 'post-delete' posts.id %}">Eliminar</a></h2>
-                <h2><a href="{% url 'post-update' posts.id %}">Modificar</a></h2>
-        {% endif %}
-
-    <hr>
-    <h2> Comentarios </h2>
-
-    {% if user.is_authenticated %}
-        <form action="{% url 'comentar-post' posts.id %}" method="post">
-            {% csrf_token %}
-            {{ form.contenido }}
-            <button type="submit"> comentar </button>
-        </form>
-    {% endif %}
-
-    {% for comentario in posts.comentarios.all %}
-        <h2>{{ comentario.autor }}:</h2> {{ comentario.contenido }} <br>
-                {% if user.is_authenticated and user == posts.autor %}
-                    <a href=""> Eliminar</a>
-                    <a href=""> Modificar</a>
+            <!-- Post principal -->
+            <div class="card shadow-sm border-0 mb-4">
+                {% if posts.imagen %}
+                <img src="{{ posts.imagen.url }}" class="card-img-top img-fluid rounded-top" alt="{{ posts.titulo }}">
                 {% endif %}
+                <div class="card-body">
+                    <h1 class="card-title text-center">{{ posts.titulo }}</h1>
+                    <p class="text-muted text-center mb-2">
+                        Publicado por <strong>{{ posts.autor }}</strong> el {{ posts.fecha_creacion|date:"d/m/Y H:i" }}
+                    </p>
+                    <hr>
+                    <p class="card-text fs-5">{{ posts.contenido|linebreaks }}</p>
 
-    {% endfor %}
+                    {% if user.is_authenticated and user == posts.autor %}
+                        <div class="d-flex justify-content-end gap-2 mt-3">
+                            <a href="{% url 'post-update' posts.id %}" class="btn btn-warning btn-sm">✏️ Editar</a>
+                            <a href="{% url 'post-delete' posts.id %}" class="btn btn-danger btn-sm">🗑️ Eliminar</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
 
-    {% endblock %}
+            <!-- Comentarios -->
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white">
+                    💬 Comentarios ({{ posts.comentarios.count }})
+                </div>
+                <div class="card-body">
+
+                    {% if user.is_authenticated %}
+                        <form action="{% url 'comentar-post' posts.id %}" method="post" class="mb-4">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                {{ form.contenido|add_class:"form-control" }}
+                            </div>
+                            <button type="submit" class="btn btn-success">Comentar</button>
+                        </form>
+                    {% else %}
+                        <p class="text-muted">
+                            <a href="{% url 'login' %}">Iniciá sesión</a> para dejar un comentario.
+                        </p>
+                    {% endif %}
+
+                    {% for comentario in posts.comentarios.all %}
+                        <div class="border-bottom py-2">
+                            <p class="mb-1"><strong>{{ comentario.autor }}</strong> dijo:</p>
+                            <p class="mb-1">{{ comentario.contenido }}</p>
+                            <small class="text-muted">{{ comentario.fecha_creacion|date:"d/m/Y H:i" }}</small>
+
+                            {% if user.is_authenticated and user == posts.autor %}
+                                <div class="mt-1">
+                                    <a href="#" class="text-warning small me-2">Editar</a>
+                                    <a href="#" class="text-danger small">Eliminar</a>
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% empty %}
+                        <p class="text-muted">Todavía no hay comentarios. ¡Sé el primero!</p>
+                    {% endfor %}
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

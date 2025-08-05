@@ -161,6 +161,6 @@ class PostUpdateView(UpdateView):
 
 # Página de inicio pública
 def index(request):
-    # Traer las últimas 3 publicaciones (ajustá fecha según tu modelo)
+    # Traer las últimas 3 publicaciones
     ultimos_posts = Post.objects.order_by('-fecha_creacion')[:3]
     return render(request, 'index.html', {'ultimos_posts': ultimos_posts})
