@@ -5,27 +5,21 @@ services:
     build: .
     volumes:
       - .:/app
-    working_dir: /app
     ports:
       - "8000:8000"
-    env_file:
-      - .env
-    depends_on:
-      - db
     command: python manage.py runserver 0.0.0.0:8000
-
   db:
     image: mysql:8.0
+    container_name: db
     restart: always
     ports:
-      - "3001:3306"
+      - "3306:3306"
     environment:
-      MYSQL_DATABASE: db
-      MYSQL_USER: user
-      MYSQL_PASSWORD: password
-      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: blog_db
+      MYSQL_USER: blog_user
+      MYSQL_PASSWORD: blog_Password
+      MYSQL_ROOT_PASSWORD: passroot
     volumes:
-      - mysql_data:/var/lib/mysql
-
+      - mysql_data:/var/lib/mysql 
 volumes:
   mysql_data:
