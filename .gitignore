@@ -13,7 +13,7 @@ venv/
 # --- Django media & static (generados) ---
 /media/
 /staticfiles/
-
+/media/*
 # --- Docker ---
 docker-compose.override.yml
 Dockerfile
