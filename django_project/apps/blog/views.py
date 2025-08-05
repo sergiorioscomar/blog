@@ -1,10 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-# importamos modelos que se utilizan para las consultas
 from .models import Post, User, Comentario
 
 def mostrarPosts(request):
-    # select * from Post
     posts = Post.objects.all()
     posts_sep = ""
     for post in posts:
@@ -13,10 +11,6 @@ def mostrarPosts(request):
     return HttpResponse(posts_sep)
 
 def mostrarUsuarios(request):
-    # select * from User 
-    # usuarios = User.objects.all()
-    # return HttpResponse(usuarios)
-    # Order_by(anombre_campo)
     usuarios = User.objects.all().order_by("id")
     usuarios_sep = ""
     for usuario in usuarios:
@@ -26,13 +20,11 @@ def mostrarUsuarios(request):
 
 
 def filtrarPostID(request):
-    # select * from Post where id=2
     post = Post.objects.get(id=2)
     return HttpResponse(post)
 
 
 def eliminarPost(request):
-    # select * from Post where id=1
     post = Post.objects.get(id=1)
     post.delete()
 
@@ -49,8 +41,6 @@ def agregarPost(request):
     return HttpResponse("Post creado")
 
 def agregarPostVarios(request):
-    # inster into Post(campos) 
-    # values(valores), (valores),(valores)
     creador = User.objects.get(id=1)
     creador2 = User.objects.get(id=2)
 
@@ -64,7 +54,6 @@ def agregarPostVarios(request):
 
 
 def mostrarPostMenorId(request):
-    #  __lt
     posts = Post.objects.filter(id__lte=4).order_by("fecha_creacion")
     posts_sep = ""
     for post in posts:
@@ -74,7 +63,6 @@ def mostrarPostMenorId(request):
     
 
 def mostrarPostMayorId(request):
-    #  __lt
     posts = Post.objects.filter(id__gte=5).order_by("fecha_creacion")
     posts_sep = ""
     for post in posts:
@@ -83,7 +71,6 @@ def mostrarPostMayorId(request):
     return HttpResponse(posts_sep)
 
 def mostrarPostContains(request):
-    #  __lt
     posts = Post.objects.filter(titulo__contains="Infl").order_by("fecha_creacion")
     posts_sep = ""
     for post in posts:
