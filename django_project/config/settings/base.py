@@ -17,6 +17,7 @@ BASE_APPS = [
 
 LOCAL_APPS = [
     # apps locales
+    'apps.api',
     'apps.blog',
     'apps.auth_app'
 ]
