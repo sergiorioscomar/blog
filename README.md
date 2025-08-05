@@ -4,7 +4,7 @@ Proyecto **Blog en Django** desplegado en un **VPS con Docker** para produccion 
 Este blog forma parte de los proyectos de **Informatorio chaco** comision 2, grupo:"Grupo XIV noche" y se encuentra disponible en:
 
 **🌐 Producción:** [http://esencialtic.com.ar:8000/blog](http://esencialtic.com.ar:8000/blog)
-**🌐 Desarrollo:** [https://serggiors.pythonanywhere.com/blog/](https://serggiors.pythonanywhere.com/blog/g)
+**🌐 Desarrollo:** [https://serggiors.pythonanywhere.com/blog/](https://serggiors.pythonanywhere.com/blog)
 
 ---
 
