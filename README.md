@@ -1,19 +1,22 @@
 # 📝 Blog en Django - "Grupo XIV noche"
 
-Proyecto **Blog en Django** desplegado en un **VPS con Docker**.  
+Proyecto **Blog en Django** desplegado en un **VPS con Docker** para produccion y **pythonanywhere** para desarrollo.  
 Este blog forma parte de los proyectos de **Informatorio chaco** comision 2, grupo:"Grupo XIV noche" y se encuentra disponible en:
 
 **🌐 Producción:** [http://esencialtic.com.ar:8000/blog](http://esencialtic.com.ar:8000/blog)
+**🌐 Desarrollo:** [https://serggiors.pythonanywhere.com/blog/](https://serggiors.pythonanywhere.com/blog/g)
 
 ---
 
 ## 🚀 Despliegue
 
 - **Framework:** Django  
-- **Base de datos:** MySQL 8 (en contenedor Docker)  
+- **Base de datos:** MySQL (en contenedor Docker) y en pythonanywhere.
 - **Servidor:** VPS propio  
+- **Servidor Desarrollo:** Pythonanywhere
 - **Contenedores:** Docker Compose  
 - **Puerto de acceso:** `8000`  
+- **Puerto de acceso:** `3001` (Base de datos) 
 
 Estructura de acceso:
 
@@ -106,6 +109,7 @@ http://localhost:8000/blog
 ```bash
 docker exec -it db mysql -u root -p
 # Contraseña: r00tp455
+#Recordar agregar la configuracion en blog/django_project/config/settings/local o en .env con variables de entorno privadas.
 ```
 
 ### 3️⃣ Ejecutar migraciones
