@@ -9,7 +9,9 @@
             <!-- Post principal -->
             <div class="card shadow-sm border-0 mb-4">
                 {% if posts.imagen %}
-                <img src="{{ posts.imagen.url }}" class="card-img-top img-fluid rounded-top" alt="{{ posts.titulo }}">
+                    <img src="{{ posts.imagen.url }}" class="card-img-top img-fluid rounded-top" alt="{{ posts.titulo }}">
+                {% else %}
+                    <img src="{% static 'img/default-post.jpg' %}" class="card-img-top img-fluid rounded-top" alt="Imagen por defecto">
                 {% endif %}
                 <div class="card-body">
                     <h1 class="card-title text-center">{{ posts.titulo }}</h1>
@@ -26,6 +28,45 @@
                         </div>
                     {% endif %}
                 </div>
+            </div>
+
+            <!-- Navegación visual entre posts -->
+            <div class="row my-4 g-3">
+                {% if posts.get_previous_by_fecha_creacion %}
+                    <div class="col-md-6">
+                        <a href="{% url 'post-detail' posts.get_previous_by_fecha_creacion.pk %}" 
+                           class="position-relative d-block text-decoration-none rounded overflow-hidden shadow-sm post-nav-card">
+                            {% if posts.get_previous_by_fecha_creacion.imagen %}
+                                <img src="{{ posts.get_previous_by_fecha_creacion.imagen.url }}" 
+                                     class="img-fluid w-100" style="height:180px; object-fit: cover;">
+                            {% else %}
+                                <img src="{% static 'img/default-post.jpg' %}" 
+                                     class="img-fluid w-100" style="height:180px; object-fit: cover;">
+                            {% endif %}
+                            <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-50 text-white fw-bold fs-6 text-center px-2">
+                                ⬅️ {{ posts.get_previous_by_fecha_creacion.titulo|truncatechars:40 }}
+                            </div>
+                        </a>
+                    </div>
+                {% endif %}
+
+                {% if posts.get_next_by_fecha_creacion %}
+                    <div class="col-md-6">
+                        <a href="{% url 'post-detail' posts.get_next_by_fecha_creacion.pk %}" 
+                           class="position-relative d-block text-decoration-none rounded overflow-hidden shadow-sm post-nav-card">
+                            {% if posts.get_next_by_fecha_creacion.imagen %}
+                                <img src="{{ posts.get_next_by_fecha_creacion.imagen.url }}" 
+                                     class="img-fluid w-100" style="height:180px; object-fit: cover;">
+                            {% else %}
+                                <img src="{% static 'img/default-post.jpg' %}" 
+                                     class="img-fluid w-100" style="height:180px; object-fit: cover;">
+                            {% endif %}
+                            <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-50 text-white fw-bold fs-6 text-center px-2">
+                                {{ posts.get_next_by_fecha_creacion.titulo|truncatechars:40 }} ➡️
+                            </div>
+                        </a>
+                    </div>
+                {% endif %}
             </div>
 
             <!-- Comentarios -->
@@ -75,4 +116,15 @@
         </div>
     </div>
 </div>
+
+<!-- Efecto hover para navegación -->
+<style>
+    .post-nav-card img {
+        transition: transform 0.3s ease;
+    }
+    .post-nav-card:hover img {
+        transform: scale(1.05);
+    }
+</style>
+
 {% endblock %}
