@@ -7,13 +7,17 @@
 <div class="container mt-4">
 
   <!-- Banner principal (Hero) -->
-      <div class="p-5 mb-4 bg-dark text-light rounded-3" style="
-          background-image: 
-            linear-gradient(135deg, #049730, #000000),
-            url('{% static "img/default-post.jpg" %}');
-          background-size: cover;
-          background-position: center;
-      ">
+      <div class="p-5 mb-4 bg-dark text-light rounded-3 position-relative overflow-hidden">
+        <img src="/static/img/default-post.jpg"
+            alt="Banner"
+            class="position-absolute top-0 start-0 w-100 h-100"
+            style="object-fit: cover; opacity: 0.3;">
+            
+        <div class="position-relative text-white">
+          <h1 class="display-5 fw-bold">Bienvenido al blog de Esencial TIC</h1>
+          <p class="fs-5">Noticias, tutoriales y recursos...</p>
+        </div>
+      </div>
       <div class="container py-5">
           <h1 class="display-5 fw-bold text-white">Bienvenido al blog de Esencial TIC</h1>
           <p class="fs-5">
@@ -74,6 +78,8 @@
 <!-- Script para cargar últimos posts -->
 <script>
 document.addEventListener("DOMContentLoaded", () => {
+    const defaultImage = "/static/img/default-post.jpg"; // Ruta absoluta
+
     fetch("/api/ultimos-posts/")
       .then(response => response.json())
       .then(posts => {
@@ -81,7 +87,10 @@ document.addEventListener("DOMContentLoaded", () => {
         container.innerHTML = posts.map(p => `
           <div class="col-md-4 mb-4">
             <div class="card h-100 shadow-sm border-0 hover-card">
-              ${p.imagen ? `<img src="${p.imagen}" class="card-img-top" alt="${p.titulo}" style="height:200px; object-fit:cover;">` : ''}
+              <img src="${p.imagen || defaultImage}" 
+                   class="card-img-top" 
+                   alt="${p.titulo}" 
+                   style="height:200px; object-fit:cover;">
               <div class="card-body">
                 <span class="badge bg-primary mb-2">${p.categoria ?? 'General'}</span>
                 <h5 class="card-title">${p.titulo}</h5>
