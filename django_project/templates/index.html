@@ -80,15 +80,15 @@ document.addEventListener("DOMContentLoaded", () => {
         container.innerHTML = posts.map(p => `
           <div class="col-md-4 mb-4">
             <div class="card h-100 shadow-sm border-0 hover-card">
-              ${p.imagen ? `<img src="${p.imagen}" class="card-img-top" alt="${p.titulo}" style="height:200px; object-fit:cover;">` : `<img src="/static/img/default-post.jpg" class="card-img-top" alt="${p.titulo}" style="height:200px; object-fit:cover;">`}
+              <img src="${p.imagen}" class="card-img-top" alt="${p.titulo}" style="height:200px; object-fit:cover;">
               <div class="card-body">
-                <span class="badge bg-primary mb-2">${p.categoria ?? 'General'}</span>
+                <span class="badge bg-primary mb-2">${p.categoria}</span>
                 <h5 class="card-title">${p.titulo}</h5>
                 <p class="card-text text-muted small">${p.descripcion}</p>
                 <a href="${p.url}" class="btn btn-primary">Ver más</a>
               </div>
               <div class="card-footer bg-white border-0 text-muted small">
-                ${p.fecha_publicacion ?? ''}
+                Publicado el ${p.fecha_publicacion} por <strong>${p.autor}</strong>
               </div>
             </div>
           </div>
