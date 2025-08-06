@@ -6,6 +6,7 @@ from django.views.generic import ListView, DetailView, DeleteView, CreateView, U
 
 from .models import Post, User, Comentario
 from .forms import CreatePostForm, UpdatePostForm
+from django.db.models import Q
 
 
 # ----------- Vistas Basadas en Clases --------------------------------
@@ -15,6 +16,7 @@ class PostListView(ListView):
     model = Post
     template_name = "post_list.html"
     context_object_name = "posts"
+    paginate_by = 5  # <- Cantidad de posts por página
 
     def get_queryset(self):
         queryset = Post.objects.all()
@@ -28,13 +30,13 @@ class PostListView(ListView):
 
         # Búsqueda por texto
         if query:
-            queryset = queryset.filter(titulo__icontains=query) | queryset.filter(contenido__icontains=query)
+            queryset = queryset.filter(Q(titulo__icontains=query) | Q(contenido__icontains=query))
 
         # Filtrado por categoría
         if categoria and categoria != "todas":
             queryset = queryset.filter(categoria=categoria)
 
-        # Filtrado por autor
+        # Filtrado por autor (texto libre)
         if autor:
             queryset = queryset.filter(autor__username__icontains=autor)
 
@@ -44,11 +46,18 @@ class PostListView(ListView):
         if fecha_fin:
             queryset = queryset.filter(fecha_creacion__date__lte=fecha_fin)
 
-        return queryset
+        return queryset.order_by('-fecha_creacion')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['categorias'] = Post.objects.values_list('categoria', flat=True).distinct()
+
+        # Para mantener los filtros en los links de paginación
+        query_params = self.request.GET.copy()
+        if 'page' in query_params:
+            query_params.pop('page')
+        context['query_params'] = query_params.urlencode()
+
         return context
 
 
