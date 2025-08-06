@@ -11,22 +11,13 @@ from django.contrib.auth.decorators import login_required
 
 #likes
 @login_required
-@require_POST
 def like_post(request, pk):
     post = get_object_or_404(Post, pk=pk)
-    user = request.user
-    liked = False
-
-    if user in post.likes.all():
-        post.likes.remove(user)
+    if request.user in post.likes.all():
+        post.likes.remove(request.user)
     else:
-        post.likes.add(user)
-        liked = True
-
-    return JsonResponse({
-        'total_likes': post.total_likes(),
-        'liked': liked
-    })
+        post.likes.add(request.user)
+    return redirect('post-detail', pk=pk)
 
 # ----------- Vistas Basadas en Clases --------------------------------
 
