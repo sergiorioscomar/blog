@@ -9,6 +9,6 @@ def ultimos_posts(request):
             'titulo': post.titulo,
             'descripcion': post.contenido[:100] + "...",
             'imagen': post.imagen.url if post.imagen else '/static/img/default-post.jpg',
-            'url': f'/posts/{post.id}/'
+            'url': f'/blog/post/{post.id}'
         })
     return JsonResponse(data, safe=False)
