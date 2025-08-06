@@ -1,5 +1,5 @@
 
-from .models import Post
+from .models import Post, Comentario
 from django import forms
 
 class CreatePostForm(forms.ModelForm):
