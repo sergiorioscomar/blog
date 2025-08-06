@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block titulo %}Blog{% endblock %}</title>
-    
-    <!-- Bootstrap CSS -->
+    <title>{% block titulo %}Blog EsencialTIC{% endblock %}</title>
+    <link rel="icon" href="{% static 'img/favicon.ico' %}">
+    <!-- Bootswatch Lux CSS -->
     <link 
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" 
         rel="stylesheet" 
-        integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" 
+        href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/lux/bootstrap.min.css"
+        integrity="sha384-6t5rUJ3cOw9c2m9e7Z2G4rjqRHfiG+kIGZ7fN20dWgR63AhsPFjZw0/sbujV1S3B" 
         crossorigin="anonymous">
 </head>
-<body class="bg-light">
+<body class="d-flex flex-column min-vh-100">
 
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 shadow">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4 shadow">
         <div class="container-fluid">
             <a class="navbar-brand fw-bold" href="{% url 'post-list' %}">📖 Blog</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" 
@@ -55,14 +55,14 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-dark text-light text-center py-3 mt-auto">
+    <footer class="bg-primary text-light text-center py-3 mt-auto shadow-lg">
         <small>© 2025 - Blog EsencialTIC</small>
     </footer>
 
     <!-- Bootstrap JS Bundle -->
     <script 
-        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" 
-        integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" 
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-8y4YZVZkN3v1XHqYw0+bgnr0+u2s3VKyKu3sb9i0mDUm6oGgxSovBGgx5fnHJzOY" 
         crossorigin="anonymous"></script>
 </body>
 </html>
