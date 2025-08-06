@@ -1,5 +1,5 @@
 
-from .models import Post, Comentario
+from .models import Post
 from django import forms
 
 class CreatePostForm(forms.ModelForm):
@@ -10,11 +10,10 @@ class CreatePostForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Recorremos todos los campos para asignar clases de Bootstrap
-        for field_name, field in self.fields.items():
-            css_class = 'form-control'
-            if isinstance(field.widget, forms.FileInput):
-                css_class = 'form-control-file'
-            field.widget.attrs.update({'class': css_class})
+        for field in self.fields.values():
+            field.widget.attrs.update({
+                'class': 'form-control',
+            })
 
 
 class UpdatePostForm(forms.ModelForm):
@@ -25,11 +24,10 @@ class UpdatePostForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Recorremos todos los campos para asignar clases de Bootstrap
-        for field_name, field in self.fields.items():
-            css_class = 'form-control'
-            if isinstance(field.widget, forms.FileInput):
-                css_class = 'form-control-file'
-            field.widget.attrs.update({'class': css_class})
+        for field in self.fields.values():
+            field.widget.attrs.update({
+                'class': 'form-control',
+            })
 
 class ComentarioForm(forms.ModelForm):
     class Meta:
