@@ -9,15 +9,7 @@ from .forms import CreatePostForm, UpdatePostForm
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 
-#likes
-@login_required
-def like_post(request, pk):
-    post = get_object_or_404(Post, pk=pk)
-    if request.user in post.likes.all():
-        post.likes.remove(request.user)
-    else:
-        post.likes.add(request.user)
-    return redirect('post_detail', pk=pk)
+
 # ----------- Vistas Basadas en Clases --------------------------------
 
 # LISTA DE POSTS CON BÚSQUEDA Y FILTRO
@@ -75,6 +67,17 @@ class PostDetailView(DetailView):
     model = Post
     template_name = "post_detail.html"
     context_object_name = "posts"
+
+    #likes
+    @login_required
+    def like_post(request, pk):
+        post = get_object_or_404(Post, pk=pk)
+        if request.user in post.likes.all():
+            post.likes.remove(request.user)
+        else:
+            post.likes.add(request.user)
+        return redirect('post_detail', pk=pk)
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
