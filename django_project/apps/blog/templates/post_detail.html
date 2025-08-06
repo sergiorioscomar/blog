@@ -14,30 +14,30 @@
                     <img src="{% static 'img/default-post.jpg' %}" class="card-img-top img-fluid rounded-top" alt="Imagen por defecto">
                 {% endif %}
                 <div class="card-body">
-                    <h1 class="card-title text-center">{{ posts.titulo }}</h1>
-                    <p class="text-muted text-center mb-2">
-                        Publicado por <strong>{{ posts.autor }}</strong> el {{ posts.fecha_creacion|date:"d/m/Y H:i" }}
-                    </p>
-                    <hr>
-                    <p class="card-text fs-5">{{ posts.contenido|linebreaks }}</p>
+                <h1 class="card-title text-center">{{ posts.titulo }}</h1>
+                <p class="text-muted text-center mb-2">
+                    Publicado por <strong>{{ posts.autor }}</strong> el {{ posts.fecha_creacion|date:"d/m/Y H:i" }}
+                </p>
+                <hr>
+                <p class="card-text fs-5">{{ posts.contenido|linebreaks }}</p>
 
-                    <!-- 🔹 Botón Like -->
-                    <div class="text-center my-3">
-                        <button id="like-btn"
-                                {% if not user.is_authenticated %}disabled{% endif %}
-                                class="btn {% if user in posts.likes.all %}btn-danger{% else %}btn-outline-danger{% endif %}"
-                                data-post-id="{{ posts.id }}">
-                            ❤️ <span id="like-count">{{ posts.total_likes }}</span>
+                <!-- 🔹 Botón Like -->
+                <div class="text-center my-3">
+                    <form action="{% url 'like_post' posts.id %}" method="post" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn {% if user in posts.likes.all %}btn-danger{% else %}btn-outline-danger{% endif %}">
+                            ❤️ {{ posts.total_likes }}
                         </button>
-                    </div>
-
-                    {% if user.is_authenticated and user == posts.autor %}
-                        <div class="d-flex justify-content-end gap-2 mt-3">
-                            <a href="{% url 'post-update' posts.id %}" class="btn btn-warning btn-sm">✏️ Editar</a>
-                            <a href="{% url 'post-delete' posts.id %}" class="btn btn-danger btn-sm">🗑️ Eliminar</a>
-                        </div>
-                    {% endif %}
+                    </form>
                 </div>
+
+                {% if user.is_authenticated and user == posts.autor %}
+                    <div class="d-flex justify-content-end gap-2 mt-3">
+                        <a href="{% url 'post-update' posts.id %}" class="btn btn-warning btn-sm">✏️ Editar</a>
+                        <a href="{% url 'post-delete' posts.id %}" class="btn btn-danger btn-sm">🗑️ Eliminar</a>
+                    </div>
+                {% endif %}
+            </div>
             </div>
 
             <!-- Navegación visual entre posts -->
@@ -136,55 +136,5 @@
         transform: scale(1.05);
     }
 </style>
-</body>
-<script>
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-    const csrftoken = getCookie('csrftoken');
-document.addEventListener('DOMContentLoaded', function() {
 
-    const likeBtn = document.getElementById('like-btn');
-    const likeCount = document.getElementById('like-count');
-
-    likeBtn.addEventListener('click', function() {
-        likeBtn.classList.toggle('btn-danger');
-        likeBtn.classList.toggle('btn-outline-danger'); 
-        const postId = this.dataset.postId;
-
-        fetch(`/blog/post/${postId}/like/`, {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': csrftoken,
-                'X-Requested-With': 'XMLHttpRequest',
-            },
-        })
-        .then(response => response.json())
-        .then(data => {
-            likeCount.textContent = data.total_likes;
-            // Cambia el estilo del botón
-            if (data.liked) {
-                likeBtn.classList.remove('btn-outline-danger');
-                likeBtn.classList.add('btn-danger');
-            } else {
-                likeBtn.classList.remove('btn-danger');
-                likeBtn.classList.add('btn-outline-danger');
-            }
-        })
-        .catch(error => console.error('Error:', error));
-    });
-});
-</script>
-<body>
 {% endblock %}
