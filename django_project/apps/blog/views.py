@@ -35,8 +35,8 @@ class PostListView(ListView):
             queryset = queryset.filter(categoria=categoria)
 
         # Filtrado por autor
-        if autor and autor != "todos":
-            queryset = queryset.filter(autor__id=autor)
+        if autor:
+            queryset = queryset.filter(autor__username__icontains=autor)
 
         # Filtrado por rango de fechas
         if fecha_inicio:
@@ -49,7 +49,6 @@ class PostListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['categorias'] = Post.objects.values_list('categoria', flat=True).distinct()
-        context['autores'] = User.objects.all()  # Para dropdown de usuarios
         return context
 
 

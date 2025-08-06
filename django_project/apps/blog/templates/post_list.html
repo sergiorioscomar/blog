@@ -28,15 +28,9 @@
 
         <!-- Autor -->
         <div class="col-md-2">
-            <select name="autor" class="form-select">
-                <option value="todos">Todos los usuarios</option>
-                {% for user in autores %}
-                    <option value="{{ user.id }}" {% if request.GET.autor == user.id|stringformat:"s" %}selected{% endif %}>
-                        {{ user.username }}
-                    </option>
-                {% endfor %}
-            </select>
-        </div>
+                <input type="text" name="autor" class="form-control" placeholder="Autor..."
+                    value="{{ request.GET.autor }}">
+            </div>
 
         <!-- Fecha inicio -->
         <div class="col-md-2">
