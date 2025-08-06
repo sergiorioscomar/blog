@@ -5,7 +5,7 @@ from django.forms import modelform_factory
 from django.views.generic import ListView, DetailView, DeleteView, CreateView, UpdateView
 
 from .models import Post, User, Comentario, Notificacion, Categoria
-from .forms import CreatePostForm, UpdatePostForm
+from .forms import CreatePostForm, UpdatePostForm, ComentarioForm
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 
@@ -79,7 +79,6 @@ class PostDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        ComentarioForm = modelform_factory(Comentario, fields=['contenido'])
         context['form'] = ComentarioForm()
         if self.request.user.is_authenticated:
             Notificacion.objects.filter(usuario=self.request.user, leido=False).update(leido=True)
