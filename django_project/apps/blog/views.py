@@ -18,23 +18,38 @@ class PostListView(ListView):
 
     def get_queryset(self):
         queryset = Post.objects.all()
+
+        # Filtros GET
         query = self.request.GET.get('q')
         categoria = self.request.GET.get('categoria')
+        autor = self.request.GET.get('autor')
+        fecha_inicio = self.request.GET.get('fecha_inicio')
+        fecha_fin = self.request.GET.get('fecha_fin')
 
-        # Filtro de búsqueda por título o contenido
+        # Búsqueda por texto
         if query:
             queryset = queryset.filter(titulo__icontains=query) | queryset.filter(contenido__icontains=query)
 
-        # Filtro por categoría
+        # Filtrado por categoría
         if categoria and categoria != "todas":
             queryset = queryset.filter(categoria=categoria)
+
+        # Filtrado por autor
+        if autor and autor != "todos":
+            queryset = queryset.filter(autor__id=autor)
+
+        # Filtrado por rango de fechas
+        if fecha_inicio:
+            queryset = queryset.filter(fecha_creacion__date__gte=fecha_inicio)
+        if fecha_fin:
+            queryset = queryset.filter(fecha_creacion__date__lte=fecha_fin)
 
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Pasamos las categorías únicas al template
         context['categorias'] = Post.objects.values_list('categoria', flat=True).distinct()
+        context['autores'] = User.objects.all()  # Para dropdown de usuarios
         return context
 
 
