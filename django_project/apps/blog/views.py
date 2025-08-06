@@ -7,7 +7,9 @@ from django.views.generic import ListView, DetailView, DeleteView, CreateView, U
 from .models import Post, User, Comentario, Notificacion, Categoria
 from .forms import CreatePostForm, UpdatePostForm, ComentarioForm
 from django.db.models import Q
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+
 
 #likes
 @login_required
@@ -86,10 +88,15 @@ class PostDetailView(DetailView):
 
 
 # ELIMINAR POST (VBC)
-class PostDeleteView(DeleteView):
+class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Post
     template_name = "post_confirm_delete.html"
     success_url = reverse_lazy("post-list")
+
+    #Chequeo de permisos
+    def test_func(self):
+        post = self.get_object()
+        return self.request.user.is_superuser or self.request.user == post.autor
 
 
 # ELIMINAR POST (VBF)
@@ -139,11 +146,15 @@ class PostCreateView(CreateView):
 
 
 # ACTUALIZAR POST
-class PostUpdateView(UpdateView):
+class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
     form_class = UpdatePostForm
     template_name = "post_update_form.html"
     success_url = reverse_lazy("post-list")
+    
+    def test_func(self):
+        post = self.get_object()
+        return self.request.user.is_superuser or self.request.user == post.autor
 
 
 # PÁGINA DE INICIO
