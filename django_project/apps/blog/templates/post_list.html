@@ -25,9 +25,9 @@
             <label class="form-label fw-semibold">Categoría</label>
             <select name="categoria" class="form-select">
                 <option value="todas">Todas</option>
-                {% for cat in categorias %}
-                    <option value="{{ cat }}" {% if request.GET.categoria == cat %}selected{% endif %}>
-                        {{ cat }}
+                {% for categoria in categorias %}
+                    <option value="{{ categoria.id }}" {% if request.GET.categoria == categoria.id|stringformat:"s" %}selected{% endif %}>
+                        {{ categoria.nombre }}
                     </option>
                 {% endfor %}
             </select>

@@ -4,7 +4,7 @@ from django.urls import reverse_lazy
 from django.forms import modelform_factory
 from django.views.generic import ListView, DetailView, DeleteView, CreateView, UpdateView
 
-from .models import Post, User, Comentario, Notificacion
+from .models import Post, User, Comentario, Notificacion, Categoria
 from .forms import CreatePostForm, UpdatePostForm
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
@@ -60,7 +60,7 @@ class PostListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['categorias'] = Post.objects.values_list('categoria', flat=True).distinct()
+        context['categorias'] = Categoria.objects.all()
 
         # Para mantener los filtros en los links de paginación
         query_params = self.request.GET.copy()
