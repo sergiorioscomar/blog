@@ -60,19 +60,55 @@
         </div>
     </form>
 
-    <div class="container mt-4">
+    <!-- Estilos de hover -->
+    <style>
+        .post-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .post-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+        .post-img-container {
+            overflow: hidden;
+            border-radius: .25rem 0 0 .25rem;
+        }
+        .post-img-container img {
+            transition: transform 0.4s ease;
+        }
+        .post-card:hover .post-img-container img {
+            transform: scale(1.1);
+        }
+    </style>
 
     <!-- Listado de posts -->
     {% for post in posts %}
-        <div class="card mb-3">
-        <div class="card-body">
-            <h5 class="card-title">{{ post.titulo }}</h5>
-            <p class="card-text">{{ post.contenido|truncatechars:150 }}</p>
-            <a href="{% url 'post-detail' post.id %}" class="btn btn-primary btn-sm">Ver más</a>
-        </div>
+        <div class="card mb-3 shadow-sm border-0 post-card">
+            <div class="row g-0">
+                <div class="col-md-3 post-img-container">
+                    {% if post.imagen %}
+                        <img src="{{ post.imagen.url }}" class="img-fluid h-100 w-100"
+                             alt="{{ post.titulo }}" style="height:150px; object-fit: cover;">
+                    {% else %}
+                        <img src="{% static 'img/default-post.jpg' %}" class="img-fluid h-100 w-100"
+                             alt="Imagen por defecto" style="height:150px; object-fit: cover;">
+                    {% endif %}
+                </div>
+                <div class="col-md-9">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ post.titulo }}</h5>
+                        <p class="card-text text-muted mb-2">
+                            Publicado el {{ post.fecha_creacion|date:"d/m/Y" }} 
+                            por <strong>{{ post.autor }}</strong>
+                        </p>
+                        <p class="card-text">{{ post.contenido|truncatechars:150 }}</p>
+                        <a href="{% url 'post-detail' post.id %}" class="btn btn-primary btn-sm">Ver más</a>
+                    </div>
+                </div>
+            </div>
         </div>
     {% empty %}
-        <p>No se encontraron resultados.</p>
+        <p class="text-center mt-5 text-muted">😢 No se encontraron resultados.</p>
     {% endfor %}
 
     <!-- Paginación -->
@@ -99,7 +135,6 @@
         </ul>
         </nav>
     {% endif %}
-    </div>
 
 </div>
 {% endblock %}
