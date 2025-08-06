@@ -5,16 +5,16 @@
 <div class="container my-5">
 
     <!-- Título -->
-    <h2 class="text-center mb-4">📝 Blog de Posts</h2>
+    <h2 class="text-center mb-4">📝 Publicaciones</h2>
     <p class="text-center text-muted mb-4">
-        Usa los filtros para buscar posts por título, categoría, autor o rango de fechas.
+        Usa los filtros para buscar publicaciones por título, categoría, autor o rango de fechas.
     </p>
 
     <!-- Formulario de búsqueda y filtro -->
     <form method="get" class="row g-3 mb-5 justify-content-center align-items-end">
 
         <!-- Buscar -->
-        <div class="col-md-3">
+        <div class="col-md-2">
             <label class="form-label fw-semibold">Buscar</label>
             <input type="text" name="q" class="form-control" placeholder="Título o contenido..."
                    value="{{ request.GET.q }}">
@@ -55,7 +55,7 @@
         </div>
 
         <!-- Botón -->
-        <div class="col-md-1">
+        <div class="col-md-2">
             <button type="submit" class="btn btn-primary w-100">Filtrar</button>
         </div>
     </form>
