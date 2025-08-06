@@ -5,14 +5,22 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 
 class CustomUserCreationForm(UserCreationForm):
-    
     email = forms.EmailField(required=True)
     first_name = forms.CharField(label="Nombre", max_length=50)
     last_name = forms.CharField(label="Apellido", max_length=50)
 
     class Meta:
         model = User
-        fields = ("username", "first_name", "last_name", "email", "password1")
+        fields = ("username", "first_name", "last_name", "email", "password1", "password2")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Recorremos todos los campos para asignar clases de Bootstrap
+        for field in self.fields.values():
+            field.widget.attrs.update({
+                'class': 'form-control',
+                'placeholder': field.label
+            })
 
     def save(self, commit=True):
         user = super().save(commit=False)
