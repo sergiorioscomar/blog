@@ -111,20 +111,22 @@ class ComentarioCreateView(CreateView):
     def form_valid(self, form):
         form.instance.autor = self.request.user
         form.instance.post_id = self.kwargs['pk']
-        # Crear notificación para el autor del post
-        if form.instance.autor != self.request.user:
+
+        # Obtener el autor del post
+        post_autor = form.instance.post.autor
+
+        # Solo notificar si quien comenta NO es el autor del post
+        if post_autor != self.request.user:
             Notificacion.objects.create(
-                usuario=form.instance.autor,
+                usuario=post_autor,
                 mensaje=f"{self.request.user.username} comentó tu post '{form.instance.post.titulo}'"
             )
 
         return super().form_valid(form)
 
-
     def get_success_url(self):
         return reverse_lazy('post-detail', kwargs={'pk': self.kwargs['pk']})
-
-
+    
 # CREAR POST
 class PostCreateView(CreateView):
     model = Post
