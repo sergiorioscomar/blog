@@ -22,6 +22,21 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                     {% if user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="notificacionesDropdown" role="button" data-bs-toggle="dropdown">
+                            🔔 Notificaciones 
+                            {% if notificaciones_no_leidas %}
+                                <span class="badge bg-danger">{{ notificaciones_no_leidas|length }}</span>
+                            {% endif %}
+                        </a>
+                        <ul class="dropdown-menu">
+                            {% for n in notificaciones_no_leidas %}
+                                <li><a class="dropdown-item" href="#">{{ n.mensaje }}</a></li>
+                            {% empty %}
+                                <li><span class="dropdown-item text-muted">Sin notificaciones</span></li>
+                            {% endfor %}
+                        </ul>
+                    </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'post-create' %}">➕ Nuevo Post</a>
                         </li>

@@ -4,7 +4,7 @@ from django.urls import reverse_lazy
 from django.forms import modelform_factory
 from django.views.generic import ListView, DetailView, DeleteView, CreateView, UpdateView
 
-from .models import Post, User, Comentario
+from .models import Post, User, Comentario, Notificacion
 from .forms import CreatePostForm, UpdatePostForm
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
@@ -81,6 +81,8 @@ class PostDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         ComentarioForm = modelform_factory(Comentario, fields=['contenido'])
         context['form'] = ComentarioForm()
+        if self.request.user.is_authenticated:
+            Notificacion.objects.filter(usuario=self.request.user, leido=False).update(leido=True)
         return context
 
 
@@ -109,7 +111,15 @@ class ComentarioCreateView(CreateView):
     def form_valid(self, form):
         form.instance.autor = self.request.user
         form.instance.post_id = self.kwargs['pk']
+        # Crear notificación para el autor del post
+        if form.instance.autor != self.request.user:
+            Notificacion.objects.create(
+                usuario=form.instance.autor,
+                mensaje=f"{self.request.user.username} comentó tu post '{form.instance.post.titulo}'"
+            )
+
         return super().form_valid(form)
+
 
     def get_success_url(self):
         return reverse_lazy('post-detail', kwargs={'pk': self.kwargs['pk']})
