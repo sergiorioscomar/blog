@@ -19,7 +19,6 @@ class CustomUserCreationForm(UserCreationForm):
         for field in self.fields.values():
             field.widget.attrs.update({
                 'class': 'form-control',
-                'placeholder': field.label
             })
 
     def save(self, commit=True):
