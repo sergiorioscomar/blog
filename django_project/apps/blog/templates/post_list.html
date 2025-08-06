@@ -6,51 +6,59 @@
 
     <!-- Título -->
     <h2 class="text-center mb-4">📝 Blog de Posts</h2>
+    <p class="text-center text-muted mb-4">
+        Usa los filtros para buscar posts por título, categoría, autor o rango de fechas.
+    </p>
 
     <!-- Formulario de búsqueda y filtro -->
-    <form method="get" class="row g-2 mb-4 justify-content-center">
+    <form method="get" class="row g-3 mb-5 justify-content-center align-items-end">
 
-        <!-- Búsqueda -->
+        <!-- Buscar -->
         <div class="col-md-3">
-            <input type="text" name="q" class="form-control" placeholder="Buscar..."
-                value="{{ request.GET.q }}">
+            <label class="form-label fw-semibold">Buscar</label>
+            <input type="text" name="q" class="form-control" placeholder="Título o contenido..."
+                   value="{{ request.GET.q }}">
         </div>
 
         <!-- Categoría -->
         <div class="col-md-2">
+            <label class="form-label fw-semibold">Categoría</label>
             <select name="categoria" class="form-select">
-                <option value="todas">Todas las categorías</option>
+                <option value="todas">Todas</option>
                 {% for cat in categorias %}
-                    <option value="{{ cat }}" {% if request.GET.categoria == cat %}selected{% endif %}>{{ cat }}</option>
+                    <option value="{{ cat }}" {% if request.GET.categoria == cat %}selected{% endif %}>
+                        {{ cat }}
+                    </option>
                 {% endfor %}
             </select>
         </div>
 
         <!-- Autor -->
         <div class="col-md-2">
-                <input type="text" name="autor" class="form-control" placeholder="Autor..."
-                    value="{{ request.GET.autor }}">
-            </div>
+            <label class="form-label fw-semibold">Autor</label>
+            <input type="text" name="autor" class="form-control" placeholder="Nombre de usuario..."
+                   value="{{ request.GET.autor }}">
+        </div>
 
         <!-- Fecha inicio -->
         <div class="col-md-2">
+            <label class="form-label fw-semibold">Desde</label>
             <input type="date" name="fecha_inicio" class="form-control"
-                value="{{ request.GET.fecha_inicio }}">
+                   value="{{ request.GET.fecha_inicio }}">
         </div>
 
         <!-- Fecha fin -->
         <div class="col-md-2">
+            <label class="form-label fw-semibold">Hasta</label>
             <input type="date" name="fecha_fin" class="form-control"
-                value="{{ request.GET.fecha_fin }}">
+                   value="{{ request.GET.fecha_fin }}">
         </div>
 
         <!-- Botón -->
         <div class="col-md-1">
             <button type="submit" class="btn btn-primary w-100">Filtrar</button>
         </div>
-
     </form>
-
 
     <!-- Listado de posts -->
     <div class="row">
@@ -69,11 +77,9 @@
 
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title">{{ post.titulo }}</h5>
-                        <p class="card-text text-muted">
-                            {{ post.contenido|truncatewords:20 }}
-                        </p>
+                        <p class="card-text text-muted">{{ post.contenido|truncatewords:20 }}</p>
                         <div class="mt-auto">
-                            <span class="badge bg-secondary">{{ post.categoria }}</span>
+                            <span class="badge bg-secondary">{{ post.categoria|default:"Sin categoría" }}</span>
                             <a href="{% url 'post-detail' post.pk %}" class="btn btn-outline-primary btn-sm float-end">
                                 Leer más
                             </a>
