@@ -20,16 +20,17 @@
                 </p>
                 <hr>
                 <p class="card-text fs-5">{{ posts.contenido|linebreaks }}</p>
-
+                {% if user.is_authenticated %}                       
+                <!-- 🔹 Botón Like -->
+                        <form action="{% url 'like_post' posts.id %}" method="post" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn {% if user in posts.likes.all %}btn-danger{% else %}btn-outline-danger{% endif %}">
+                                ❤️ {{ posts.total_likes }}
+                            </button>
+                        </form>
+                        {% endif %} 
                 {% if user.is_authenticated and user == posts.autor %}
                     <div class="d-flex justify-content-end gap-2 mt-3">
-                            <!-- 🔹 Botón Like -->
-                            <form action="{% url 'like_post' posts.id %}" method="post" class="d-inline">
-                                {% csrf_token %}
-                                <button type="submit" class="btn {% if user in posts.likes.all %}btn-danger{% else %}btn-outline-danger{% endif %}">
-                                    ❤️ {{ posts.total_likes }}
-                                </button>
-                            </form>
                         <a href="{% url 'post-update' posts.id %}" class="btn btn-warning btn-sm">✏️ Editar</a>
                         <a href="{% url 'post-delete' posts.id %}" class="btn btn-danger btn-sm">🗑️ Eliminar</a>
                     </div>
