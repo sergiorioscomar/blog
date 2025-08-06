@@ -58,7 +58,7 @@
                             <p class="mb-1">{{ comentario.contenido }}</p>
                             <small class="text-muted">{{ comentario.fecha_creacion|date:"d/m/Y H:i" }}</small>
 
-                            {% if user.is_authenticated and user == posts.autor %}
+                            {% if user.is_authenticated and (user == posts.autor or user.is_superuser) %}
                                 <div class="mt-1">
                                     <a href="#" class="text-warning small me-2">Editar</a>
                                     <a href="#" class="text-danger small">Eliminar</a>
