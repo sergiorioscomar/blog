@@ -7,7 +7,7 @@ from django.views.generic import ListView, DetailView, DeleteView, CreateView, U
 from .models import Post, User, Comentario, Notificacion, Categoria
 from .forms import CreatePostForm, UpdatePostForm, ComentarioForm
 from django.db.models import Q
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 
