@@ -36,6 +36,15 @@ class PostDeleteView(DeleteView):
     template_name = "post_confirm_delete.html"
     success_url = reverse_lazy("post-list")
 
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_superuser:
+            return super().dispatch(request, *args, **kwargs)
+        # Solo el autor puede eliminar su post
+        post = self.get_object()
+        if post.autor != request.user:
+            return HttpResponse("No tienes permiso para eliminar este post.", status=403)
+        return super().dispatch(request, *args, **kwargs)
+    
 
 #  delete en VBF
 from django.shortcuts import get_object_or_404, redirect
@@ -86,6 +95,15 @@ class PostUpdateView(UpdateView):
     form_class = UpdatePostForm
     template_name ="post_update_form.html"
     success_url = reverse_lazy("post-list")
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_superuser:
+            return super().dispatch(request, *args, **kwargs)
+        # Solo el autor puede editar su post
+        post = self.get_object()
+        if post.autor != request.user:
+            return HttpResponse("No tienes permiso para editar este post.", status=403)
+        return super().dispatch(request, *args, **kwargs)
 
 # Página de inicio pública
 def index(request):
