@@ -4,14 +4,55 @@
 {% block content %}
 <div class="container mt-4">
 
-  <!-- Banner principal -->
-  <div class="p-5 mb-4 bg-light rounded-3" style="background-image: url('https://source.unsplash.com/1600x400/?technology,blog'); background-size: cover;">
-    <div class="container-fluid py-5 text-white" style="background-color: rgba(0,0,0,0.4); border-radius: 10px;">
-      <h1 class="display-5 fw-bold">Bienvenido a mi Blog</h1>
-      <p class="col-md-8 fs-4">Descubre lo último en noticias, tecnología y curiosidades.</p>
-      <a class="btn btn-primary btn-lg" href="{% url 'login' %}">Ingresar</a>
-      <a class="btn btn-outline-light btn-lg" href="{% url 'register' %}">Registrarse</a>
-    </div>
+  <!-- Banner principal (Hero) -->
+  <div class="p-5 mb-4 bg-dark text-light rounded-3" style="
+      background: linear-gradient(135deg, #0d6efd, #6610f2);
+      background-size: cover;
+      background-position: center;
+  ">
+      <div class="container py-5">
+          <h1 class="display-5 fw-bold">Bienvenido a mi Blog</h1>
+          <p class="fs-5">
+              Noticias, tutoriales y recursos sobre desarrollo web, seguridad, redes y marketing digital.
+          </p>
+          <a href="{% url 'login' %}" class="btn btn-primary btn-lg me-2 shadow">Ingresar</a>
+          <a href="{% url 'register' %}" class="btn btn-outline-light btn-lg shadow">Registrarse</a>
+      </div>
+  </div>
+
+  <!-- Sección de Temas Destacados -->
+  <div class="container my-5 text-center">
+      <h2 class="mb-4 fw-bold">Temas que Cubrimos</h2>
+      <div class="row g-4">
+          <div class="col-md-3">
+              <div class="p-4 border rounded shadow-sm h-100">
+                  <i class="bi bi-shield-lock fs-1 text-primary mb-3"></i>
+                  <h5>Seguridad</h5>
+                  <p class="text-muted small">Protege tus sistemas y redes.</p>
+              </div>
+          </div>
+          <div class="col-md-3">
+              <div class="p-4 border rounded shadow-sm h-100">
+                  <i class="bi bi-cloud-arrow-up fs-1 text-success mb-3"></i>
+                  <h5>Redes & Cloud</h5>
+                  <p class="text-muted small">Infraestructura y conectividad moderna.</p>
+              </div>
+          </div>
+          <div class="col-md-3">
+              <div class="p-4 border rounded shadow-sm h-100">
+                  <i class="bi bi-code-slash fs-1 text-info mb-3"></i>
+                  <h5>Desarrollo Web</h5>
+                  <p class="text-muted small">Frameworks, APIs y mejores prácticas.</p>
+              </div>
+          </div>
+          <div class="col-md-3">
+              <div class="p-4 border rounded shadow-sm h-100">
+                  <i class="bi bi-bar-chart fs-1 text-warning mb-3"></i>
+                  <h5>Marketing Digital</h5>
+                  <p class="text-muted small">SEO, Ads y analítica para crecer.</p>
+              </div>
+          </div>
+      </div>
   </div>
 
   <!-- Últimos posts -->
@@ -21,11 +62,24 @@
   </div>
 
   <div class="text-center mt-4">
-    <a href="{% url 'post-list' %}" class="btn btn-outline-primary">Ver todos los posts</a>
+    <a href="{% url 'post-list' %}" class="btn btn-outline-primary btn-lg shadow-sm">Ver todos los posts</a>
   </div>
 
 </div>
 
+<!-- Footer -->
+<footer class="bg-dark text-light py-4 mt-5">
+    <div class="container text-center">
+        <p class="mb-1">&copy; 2025 - Blog EsencialTIC</p>
+        <div>
+            <a href="#" class="text-light me-3"><i class="bi bi-github"></i></a>
+            <a href="#" class="text-light me-3"><i class="bi bi-linkedin"></i></a>
+            <a href="#" class="text-light"><i class="bi bi-twitter-x"></i></a>
+        </div>
+    </div>
+</footer>
+
+<!-- Script para cargar últimos posts -->
 <script>
 document.addEventListener("DOMContentLoaded", () => {
     fetch("/api/ultimos-posts/")
@@ -34,11 +88,15 @@ document.addEventListener("DOMContentLoaded", () => {
         const container = document.getElementById("ultimos-posts");
         container.innerHTML = posts.map(p => `
           <div class="col-md-4 mb-4">
-            <div class="card h-100 shadow-sm">
-              ${p.imagen ? `<img src="${p.imagen}" class="card-img-top" alt="${p.titulo}">` : ''}
+            <div class="card h-100 shadow-sm border-0 hover-card">
+              ${p.imagen ? `<img src="${p.imagen}" class="card-img-top" alt="${p.titulo}" style="height:200px; object-fit:cover;">` : ''}
               <div class="card-body">
+                <span class="badge bg-primary mb-2">${p.categoria ?? 'General'}</span>
                 <h5 class="card-title">${p.titulo}</h5>
-                <p class="card-text">${p.descripcion}</p>
+                <p class="card-text text-muted small">${p.descripcion}</p>
+              </div>
+              <div class="card-footer bg-white border-0 text-muted small">
+                ${p.fecha_publicacion ?? ''}
               </div>
             </div>
           </div>
@@ -46,4 +104,13 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 });
 </script>
+
+<style>
+/* Hover effect en cards */
+.hover-card:hover {
+    transform: translateY(-5px);
+    transition: 0.3s ease-in-out;
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15) !important;
+}
+</style>
 {% endblock %}
