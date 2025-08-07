@@ -31,7 +31,7 @@
                         </form>
                     {% endif %}
                 </div>
-                {% if user.is_authenticated and (user.is_superuser or user == post.autor) %}
+                {% if user.is_authenticated and (user.is_superuser or user == posts.autor) %}
                     <div class="d-flex justify-content-end gap-2 mt-3">
                         <a href="{% url 'post-update' posts.id %}" class="btn btn-warning btn-sm">✏️ Editar</a>
                         <a href="{% url 'post-delete' posts.id %}" class="btn btn-danger btn-sm">🗑️ Eliminar</a>
