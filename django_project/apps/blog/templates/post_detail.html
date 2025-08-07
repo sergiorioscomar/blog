@@ -31,7 +31,7 @@
                         </form>
                     {% endif %}
                 </div>
-                {% if user.is_authenticated and (user.is_superuser or user == posts.autor) %}
+                {% if user.is_authenticated and user.is_superuser or user.is_authenticated and user == posts.autor %}
                     <div class="d-flex justify-content-end gap-2 mt-3">
                         <a href="{% url 'post-update' posts.id %}" class="btn btn-warning btn-sm">✏️ Editar</a>
                         <a href="{% url 'post-delete' posts.id %}" class="btn btn-danger btn-sm">🗑️ Eliminar</a>
@@ -109,10 +109,10 @@
                             <p class="mb-1">{{ comentario.contenido }}</p>
                             <small class="text-muted">{{ comentario.fecha_creacion|date:"d/m/Y H:i" }}</small>
 
-                            {% if user.is_authenticated and (user.is_superuser or user == comentario.autor) %}
+                            {% if user.is_authenticated and user.is_superuser or user.is_authenticated and user == comentario.autor %}
                                 <div class="mt-1">
-                                    <a href="#" class="text-warning small me-2">Editar</a>
-                                    <a href="#" class="text-danger small">Eliminar</a>
+                                    <a href="{% url 'comentar-update' comentario.id %}" class="text-warning small me-2">Editar</a>
+                                    <a href="{% url 'comentar-delete' comentario.id %}" class="text-danger small">Eliminar</a>
                                 </div>
                             {% endif %}
                         </div>
