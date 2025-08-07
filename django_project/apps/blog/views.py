@@ -7,7 +7,7 @@ from django.views.generic import ListView, DetailView, DeleteView, CreateView, U
 from .models import Post, User, Comentario, Notificacion, Categoria
 from .forms import CreatePostForm, UpdatePostForm, ComentarioForm
 from django.db.models import Q
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 
@@ -144,17 +144,37 @@ class PostCreateView(CreateView):
         form.instance.autor = self.request.user
         return super().form_valid(form)
 
+#Comentarios editar y eliminar
+class ComentarioUpdateView(UpdateView):
+    model = Comentario
+    form_class = ComentarioForm
+    template_name = "comentario-eliminar.html"
 
+    def get_success_url(self):
+        return reverse_lazy('post-detail', kwargs={'pk': self.object.post.pk})
+    
+    def test_func(self):
+        comentario = self.get_object()
+        user = self.request.user
+        return user.is_superuser or user == comentario.autor
+class ComentarioDeleteView(DeleteView):
+    model = Comentario
+    template_name = "comentario_confirm_delete.html"
+
+    def get_success_url(self):
+        return reverse_lazy('post-detail', kwargs={'pk': self.object.post.pk})
+
+    def test_func(self):
+        comentario = self.get_object()
+        user = self.request.user
+        return user.is_superuser or user == comentario.autor
+    
 # ACTUALIZAR POST
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
     form_class = UpdatePostForm
     template_name = "post_update_form.html"
     success_url = reverse_lazy("post-list")
-    
-    def test_func(self):
-        post = self.get_object()
-        return self.request.user.is_superuser or self.request.user == post.autor
 
 
 # PÁGINA DE INICIO

@@ -16,4 +16,6 @@ urlpatterns = [
 
 
     path('post/<int:pk>/comentar/', ComentarioCreateView.as_view(), name='comentar-post'),
+    path('comentario/<int:pk>/editar/', views.ComentarioUpdateView.as_view(), name='comentario-editar'),
+    path('comentario/<int:pk>/eliminar/', views.ComentarioDeleteView.as_view(), name='comentario-eliminar'),
 ]
