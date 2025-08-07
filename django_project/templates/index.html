@@ -1,17 +1,20 @@
 {% extends 'base.html' %}
+{% load static %}
+
 {% block titulo %}Inicio{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
 
   <!-- Banner principal (Hero) -->
-  <div class="p-5 mb-4 bg-dark text-light rounded-3" style="
-      background: linear-gradient(135deg, #049730, #ffffff);
-      background-size: cover;
-      background-position: center;
-  ">
-      <div class="container py-5">
-          <h1 class="display-5 fw-bold">Bienvenido al blog de Esencial TIC</h1>
+   <div class="p-5 mb-4 bg-dark text-light rounded-3 position-relative overflow-hidden">
+    <img src="/static/img/default-post.jpg"
+        alt="Banner"
+        class="position-absolute top-0 start-0 w-100 h-100"
+        style="object-fit: cover; opacity: 0.3;">
+        
+      <div class="position-relative text-white">
+          <h1 class="display-5 fw-bold text-white">Bienvenido al blog de Esencial TIC</h1>
           <p class="fs-5">
               Noticias, tutoriales y recursos sobre tecnologías de la información y comunicación.
           </p>
@@ -41,15 +44,15 @@
           <div class="col-md-3">
               <div class="p-4 border rounded shadow-sm h-100">
                   <i class="bi bi-code-slash fs-1 text-info mb-3"></i>
-                  <h5>Desarrollo Web</h5>
-                  <p class="text-muted small">Frameworks, APIs y mejores prácticas.</p>
+                  <h5>Desarrollo</h5>
+                  <p class="text-muted small">Herramientas, Frameworks, APIs y buenas prácticas.</p>
               </div>
           </div>
           <div class="col-md-3">
               <div class="p-4 border rounded shadow-sm h-100">
                   <i class="bi bi-bar-chart fs-1 text-warning mb-3"></i>
-                  <h5>Soporte Tecnologías</h5>
-                  <p class="text-muted small">Soporte técnico tecnologías Web.</p>
+                  <h5>Soporte</h5>
+                  <p class="text-muted small">Soporte tecnologías Web y Cloud.</p>
               </div>
           </div>
       </div>
@@ -77,14 +80,15 @@ document.addEventListener("DOMContentLoaded", () => {
         container.innerHTML = posts.map(p => `
           <div class="col-md-4 mb-4">
             <div class="card h-100 shadow-sm border-0 hover-card">
-              ${p.imagen ? `<img src="${p.imagen}" class="card-img-top" alt="${p.titulo}" style="height:200px; object-fit:cover;">` : ''}
+              <img src="${p.imagen}" class="card-img-top" alt="${p.titulo}" style="height:200px; object-fit:cover;">
               <div class="card-body">
-                <span class="badge bg-primary mb-2">${p.categoria ?? 'General'}</span>
+                <span class="badge bg-primary mb-2">${p.categoria}</span>
                 <h5 class="card-title">${p.titulo}</h5>
                 <p class="card-text text-muted small">${p.descripcion}</p>
+                <a href="${p.url}" class="btn btn-primary">Ver más</a>
               </div>
               <div class="card-footer bg-white border-0 text-muted small">
-                ${p.fecha_publicacion ?? ''}
+                Publicado el ${p.fecha_publicacion} por <strong>${p.autor}</strong>
               </div>
             </div>
           </div>

@@ -24,12 +24,16 @@ class Post(models.Model):
     titulo = models.CharField(max_length=120, null=False, blank=False, verbose_name="Título") 
     contenido = models.TextField(verbose_name="Contenido del Post")
     imagen = models.ImageField(null=True, blank=True, upload_to="media/posts")
+    likes = models.ManyToManyField(User, related_name='liked_posts', blank=True)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
 
     categoria = models.ForeignKey(Categoria, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return self.titulo
+    
+    def total_likes(self):
+        return self.likes.count()
     
     class Meta:
         db_table = "posts"
@@ -53,3 +57,11 @@ class Comentario(models.Model):
         verbose_name_plural = "Comentarios"
         ordering = ["-fecha_creacion"] 
 
+class Notificacion(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notificaciones')
+    mensaje = models.CharField(max_length=255)
+    leido = models.BooleanField(default=False)
+    fecha = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.usuario.username} - {self.mensaje[:20]}"

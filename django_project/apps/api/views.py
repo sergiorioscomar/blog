@@ -8,7 +8,10 @@ def ultimos_posts(request):
         data.append({
             'titulo': post.titulo,
             'descripcion': post.contenido[:100] + "...",
-            'imagen': post.imagen.url if post.imagen else 'https://source.unsplash.com/600x400/?blog,writing',
-            'url': f'/posts/{post.id}/'
+            'imagen': post.imagen.url if post.imagen else '/static/img/default-post.jpg',
+            "categoria": post.categoria.nombre if post.categoria else "Sin categoría",
+            'url': f'/blog/post/{post.id}',
+            'fecha_publicacion': post.fecha_creacion.strftime('%Y-%m-%d %H:%M:%S'),
+            'autor': post.autor.username if post.autor else "Anónimo"
         })
     return JsonResponse(data, safe=False)

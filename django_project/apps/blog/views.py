@@ -4,9 +4,22 @@ from django.urls import reverse_lazy
 from django.forms import modelform_factory
 from django.views.generic import ListView, DetailView, DeleteView, CreateView, UpdateView
 
-from .models import Post, User, Comentario
-from .forms import CreatePostForm, UpdatePostForm
+from .models import Post, User, Comentario, Notificacion, Categoria
+from .forms import CreatePostForm, UpdatePostForm, ComentarioForm
+from django.db.models import Q
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
+
+#likes
+@login_required
+def like_post(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    if request.user in post.likes.all():
+        post.likes.remove(request.user)
+    else:
+        post.likes.add(request.user)
+    return redirect('post-detail', pk=pk)
 
 # ----------- Vistas Basadas en Clases --------------------------------
 
@@ -15,6 +28,7 @@ class PostListView(ListView):
     model = Post
     template_name = "post_list.html"
     context_object_name = "posts"
+    paginate_by = 5  # <- Cantidad de posts por página
 
     def get_queryset(self):
         queryset = Post.objects.all()
@@ -28,13 +42,13 @@ class PostListView(ListView):
 
         # Búsqueda por texto
         if query:
-            queryset = queryset.filter(titulo__icontains=query) | queryset.filter(contenido__icontains=query)
+            queryset = queryset.filter(Q(titulo__icontains=query) | Q(contenido__icontains=query))
 
         # Filtrado por categoría
         if categoria and categoria != "todas":
             queryset = queryset.filter(categoria=categoria)
 
-        # Filtrado por autor
+        # Filtrado por autor (texto libre)
         if autor:
             queryset = queryset.filter(autor__username__icontains=autor)
 
@@ -44,11 +58,18 @@ class PostListView(ListView):
         if fecha_fin:
             queryset = queryset.filter(fecha_creacion__date__lte=fecha_fin)
 
-        return queryset
+        return queryset.order_by('-fecha_creacion')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['categorias'] = Post.objects.values_list('categoria', flat=True).distinct()
+        context['categorias'] = Categoria.objects.all()
+
+        # Para mantener los filtros en los links de paginación
+        query_params = self.request.GET.copy()
+        if 'page' in query_params:
+            query_params.pop('page')
+        context['query_params'] = query_params.urlencode()
+
         return context
 
 
@@ -60,16 +81,22 @@ class PostDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        ComentarioForm = modelform_factory(Comentario, fields=['contenido'])
         context['form'] = ComentarioForm()
+        if self.request.user.is_authenticated:
+            Notificacion.objects.filter(usuario=self.request.user, leido=False).update(leido=True)
         return context
 
 
 # ELIMINAR POST (VBC)
-class PostDeleteView(DeleteView):
+class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Post
     template_name = "post_confirm_delete.html"
     success_url = reverse_lazy("post-list")
+
+    #Chequeo de permisos
+    def test_func(self):
+        post = self.get_object()
+        return self.request.user.is_superuser or self.request.user == post.autor
 
 
 # ELIMINAR POST (VBF)
@@ -90,12 +117,22 @@ class ComentarioCreateView(CreateView):
     def form_valid(self, form):
         form.instance.autor = self.request.user
         form.instance.post_id = self.kwargs['pk']
+
+        # Obtener el autor del post
+        post_autor = form.instance.post.autor
+
+        # Solo notificar si quien comenta NO es el autor del post
+        if post_autor != self.request.user:
+            Notificacion.objects.create(
+                usuario=post_autor,
+                mensaje=f"{self.request.user.username} comentó tu post '{form.instance.post.titulo}'"
+            )
+
         return super().form_valid(form)
 
     def get_success_url(self):
         return reverse_lazy('post-detail', kwargs={'pk': self.kwargs['pk']})
-
-
+    
 # CREAR POST
 class PostCreateView(CreateView):
     model = Post
@@ -107,9 +144,33 @@ class PostCreateView(CreateView):
         form.instance.autor = self.request.user
         return super().form_valid(form)
 
+#Comentarios editar y eliminar
+class ComentarioUpdateView(UpdateView):
+    model = Comentario
+    form_class = ComentarioForm
+    template_name = "comentario-editar.html"
 
+    def get_success_url(self):
+        return reverse_lazy('post-detail', kwargs={'pk': self.object.post.pk})
+    
+    def test_func(self):
+        comentario = self.get_object()
+        user = self.request.user
+        return user.is_superuser or user == comentario.autor
+class ComentarioDeleteView(DeleteView):
+    model = Comentario
+    template_name = "comentario-eliminar.html"
+
+    def get_success_url(self):
+        return reverse_lazy('post-detail', kwargs={'pk': self.object.post.pk})
+
+    def test_func(self):
+        comentario = self.get_object()
+        user = self.request.user
+        return user.is_superuser or user == comentario.autor
+    
 # ACTUALIZAR POST
-class PostUpdateView(UpdateView):
+class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
     form_class = UpdatePostForm
     template_name = "post_update_form.html"

@@ -5,16 +5,16 @@
 <div class="container my-5">
 
     <!-- Título -->
-    <h2 class="text-center mb-4">📝 Blog de Posts</h2>
+    <h2 class="text-center mb-4">📝 Publicaciones</h2>
     <p class="text-center text-muted mb-4">
-        Usa los filtros para buscar posts por título, categoría, autor o rango de fechas.
+        Usa los filtros para buscar publicaciones por título, categoría, autor o rango de fechas.
     </p>
 
     <!-- Formulario de búsqueda y filtro -->
     <form method="get" class="row g-3 mb-5 justify-content-center align-items-end">
 
         <!-- Buscar -->
-        <div class="col-md-3">
+        <div class="col-md-2">
             <label class="form-label fw-semibold">Buscar</label>
             <input type="text" name="q" class="form-control" placeholder="Título o contenido..."
                    value="{{ request.GET.q }}">
@@ -25,9 +25,9 @@
             <label class="form-label fw-semibold">Categoría</label>
             <select name="categoria" class="form-select">
                 <option value="todas">Todas</option>
-                {% for cat in categorias %}
-                    <option value="{{ cat }}" {% if request.GET.categoria == cat %}selected{% endif %}>
-                        {{ cat }}
+                {% for categoria in categorias %}
+                    <option value="{{ categoria.id }}" {% if request.GET.categoria == categoria.id|stringformat:"s" %}selected{% endif %}>
+                        {{ categoria.nombre }}
                     </option>
                 {% endfor %}
             </select>
@@ -55,49 +55,86 @@
         </div>
 
         <!-- Botón -->
-        <div class="col-md-1">
+        <div class="col-md-2">
             <button type="submit" class="btn btn-primary w-100">Filtrar</button>
         </div>
     </form>
 
-    <!-- Listado de posts -->
-    <div class="row">
-        {% for post in posts %}
-            <div class="col-md-4 mb-4">
-                <div class="card h-100 shadow-sm border-0">
-                    
-                    <!-- Imagen pequeña arriba -->
-                    {% if post.imagen %}
-                        <img src="{{ post.imagen.url }}" class="card-img-top" 
-                             style="object-fit: cover; height: 160px;">
-                    {% else %}
-                        <img src="{% static 'img/default-post.jpg' %}" class="card-img-top"
-                             style="object-fit: cover; height: 160px;">
-                    {% endif %}
+    <!-- Estilos de hover -->
+    <style>
+        .post-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .post-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+        .post-img-container {
+            overflow: hidden;
+            border-radius: .25rem 0 0 .25rem;
+        }
+        .post-img-container img {
+            transition: transform 0.4s ease;
+        }
+        .post-card:hover .post-img-container img {
+            transform: scale(1.1);
+        }
+    </style>
 
-                    <div class="card-body d-flex flex-column">
+    <!-- Listado de posts -->
+    {% for post in posts %}
+        <div class="card mb-3 shadow-sm border-0 post-card">
+            <div class="row g-0">
+                <div class="col-md-3 post-img-container">
+                    {% if post.imagen %}
+                        <img src="{{ post.imagen.url }}" class="img-fluid h-100 w-100"
+                             alt="{{ post.titulo }}" style="height:150px; object-fit: cover;">
+                    {% else %}
+                        <img src="{% static 'img/default-post.jpg' %}" class="img-fluid h-100 w-100"
+                             alt="Imagen por defecto" style="height:150px; object-fit: cover;">
+                    {% endif %}
+                </div>
+                <div class="col-md-9">
+                    <div class="card-body">
                         <h5 class="card-title">{{ post.titulo }}</h5>
-                        <p class="card-text text-muted">{{ post.contenido|truncatewords:20 }}</p>
-                        <div class="mt-auto">
-                            <span class="badge bg-secondary">{{ post.categoria|default:"Sin categoría" }}</span>
-                            <a href="{% url 'post-detail' post.pk %}" class="btn btn-outline-primary btn-sm float-end">
-                                Leer más
-                            </a>
-                        </div>
-                    </div>
-                    <div class="card-footer text-muted small">
-                        Publicado el {{ post.fecha_creacion|date:"d/m/Y" }} por {{ post.autor.username }}
+                        <p class="card-text text-muted mb-2">
+                            Publicado el {{ post.fecha_creacion|date:"d/m/Y" }} 
+                            por <strong>{{ post.autor }}</strong>
+                        </p>
+                        <p class="card-text">{{ post.contenido|truncatechars:150 }}</p>
+                        <a href="{% url 'post-detail' post.id %}" class="btn btn-primary btn-sm">Ver más</a>
                     </div>
                 </div>
             </div>
-        {% empty %}
-            <div class="col-12 text-center mt-5">
-                <div class="alert alert-warning">
-                    😢 No se encontraron posts que coincidan con tu búsqueda o filtro.
-                </div>
-            </div>
-        {% endfor %}
-    </div>
+        </div>
+    {% empty %}
+        <p class="text-center mt-5 text-muted">😢 No se encontraron resultados.</p>
+    {% endfor %}
+
+    <!-- Paginación -->
+    {% if is_paginated %}
+        <nav>
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}&{{ query_params }}">Anterior</a>
+            </li>
+            {% endif %}
+
+            <li class="page-item disabled">
+            <span class="page-link">
+                Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+            </span>
+            </li>
+
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}&{{ query_params }}">Siguiente</a>
+            </li>
+            {% endif %}
+        </ul>
+        </nav>
+    {% endif %}
 
 </div>
 {% endblock %}

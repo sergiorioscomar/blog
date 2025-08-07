@@ -9,23 +9,74 @@
             <!-- Post principal -->
             <div class="card shadow-sm border-0 mb-4">
                 {% if posts.imagen %}
-                <img src="{{ posts.imagen.url }}" class="card-img-top img-fluid rounded-top" alt="{{ posts.titulo }}">
+                    <img src="{{ posts.imagen.url }}" class="card-img-top img-fluid rounded-top" alt="{{ posts.titulo }}">
+                {% else %}
+                    <img src="{% static 'img/default-post.jpg' %}" class="card-img-top img-fluid rounded-top" alt="Imagen por defecto">
                 {% endif %}
                 <div class="card-body">
-                    <h1 class="card-title text-center">{{ posts.titulo }}</h1>
-                    <p class="text-muted text-center mb-2">
-                        Publicado por <strong>{{ posts.autor }}</strong> el {{ posts.fecha_creacion|date:"d/m/Y H:i" }}
-                    </p>
-                    <hr>
-                    <p class="card-text fs-5">{{ posts.contenido|linebreaks }}</p>
-
-                    {% if user.is_authenticated and user == posts.autor %}
-                        <div class="d-flex justify-content-end gap-2 mt-3">
-                            <a href="{% url 'post-update' posts.id %}" class="btn btn-warning btn-sm">✏️ Editar</a>
-                            <a href="{% url 'post-delete' posts.id %}" class="btn btn-danger btn-sm">🗑️ Eliminar</a>
-                        </div>
+                <h1 class="card-title text-center">{{ posts.titulo }}</h1>
+                <p class="text-muted text-center mb-2">
+                    Publicado por <strong>{{ posts.autor }}</strong> el {{ posts.fecha_creacion|date:"d/m/Y H:i" }}
+                </p>
+                <hr>
+                <p class="card-text fs-5">{{ posts.contenido|linebreaks }}</p>
+                <div class="text-center mt-3">
+                    {% if user.is_authenticated %}                       
+                        <!-- 🔹 Botón Like -->
+                        <form action="{% url 'like_post' posts.id %}" method="post" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn {% if user in posts.likes.all %}btn-danger{% else %}btn-outline-danger{% endif %}">
+                                ❤️ {{ posts.total_likes }}
+                            </button>
+                        </form>
                     {% endif %}
                 </div>
+                {% if user.is_authenticated and user.is_superuser or user.is_authenticated and user == posts.autor %}
+                    <div class="d-flex justify-content-end gap-2 mt-3">
+                        <a href="{% url 'post-update' posts.id %}" class="btn btn-warning btn-sm">✏️ Editar</a>
+                        <a href="{% url 'post-delete' posts.id %}" class="btn btn-danger btn-sm">🗑️ Eliminar</a>
+                    </div>
+                {% endif %}
+            </div>
+            </div>
+
+            <!-- Navegación visual entre posts -->
+            <div class="row my-4 g-3">
+                {% if posts.get_previous_by_fecha_creacion %}
+                    <div class="col-md-6">
+                        <a href="{% url 'post-detail' posts.get_previous_by_fecha_creacion.pk %}" 
+                           class="position-relative d-block text-decoration-none rounded overflow-hidden shadow-sm post-nav-card">
+                            {% if posts.get_previous_by_fecha_creacion.imagen %}
+                                <img src="{{ posts.get_previous_by_fecha_creacion.imagen.url }}" 
+                                     class="img-fluid w-100" style="height:180px; object-fit: cover;">
+                            {% else %}
+                                <img src="{% static 'img/default-post.jpg' %}" 
+                                     class="img-fluid w-100" style="height:180px; object-fit: cover;">
+                            {% endif %}
+                            <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-50 text-white fw-bold fs-6 text-center px-2">
+                                ⬅️ {{ posts.get_previous_by_fecha_creacion.titulo|truncatechars:40 }}
+                            </div>
+                        </a>
+                    </div>
+                {% endif %}
+
+                {% if posts.get_next_by_fecha_creacion %}
+                    <div class="col-md-6">
+                        <a href="{% url 'post-detail' posts.get_next_by_fecha_creacion.pk %}" 
+                           class="position-relative d-block text-decoration-none rounded overflow-hidden shadow-sm post-nav-card">
+                            {% if posts.get_next_by_fecha_creacion.imagen %}
+                                <img src="{{ posts.get_next_by_fecha_creacion.imagen.url }}" 
+                                     class="img-fluid w-100" style="height:180px; object-fit: cover;">
+                            {% else %}
+                                <img src="{% static 'img/default-post.jpg' %}" 
+                                     class="img-fluid w-100" style="height:180px; object-fit: cover;">
+                            {% endif %}
+                            <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-50 text-white fw-bold fs-6 text-center px-2">
+                                {{ posts.get_next_by_fecha_creacion.titulo|truncatechars:40 }} ➡️
+                            </div>
+                        </a>
+                    </div>
+                {% endif %}
             </div>
 
             <!-- Comentarios -->
@@ -57,11 +108,10 @@
                             <p class="mb-1"><strong>{{ comentario.autor }}</strong> dijo:</p>
                             <p class="mb-1">{{ comentario.contenido }}</p>
                             <small class="text-muted">{{ comentario.fecha_creacion|date:"d/m/Y H:i" }}</small>
-
-                            {% if user.is_authenticated and user == posts.autor %}
+                            {% if user.is_authenticated and user.is_superuser or user.is_authenticated and user == comentario.autor %}
                                 <div class="mt-1">
-                                    <a href="#" class="text-warning small me-2">Editar</a>
-                                    <a href="#" class="text-danger small">Eliminar</a>
+                                    <a href="{% url 'comentario-editar' comentario.pk %}" class="text-warning small me-2">Editar</a>
+                                    <a href="{% url 'comentario-eliminar' comentario.pk %}" class="text-danger small">Eliminar</a>
                                 </div>
                             {% endif %}
                         </div>
@@ -75,4 +125,15 @@
         </div>
     </div>
 </div>
+
+<!-- Efecto hover para navegación -->
+<style>
+    .post-nav-card img {
+        transition: transform 0.3s ease;
+    }
+    .post-nav-card:hover img {
+        transform: scale(1.05);
+    }
+</style>
+
 {% endblock %}
