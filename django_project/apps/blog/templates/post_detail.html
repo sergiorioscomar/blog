@@ -108,11 +108,10 @@
                             <p class="mb-1"><strong>{{ comentario.autor }}</strong> dijo:</p>
                             <p class="mb-1">{{ comentario.contenido }}</p>
                             <small class="text-muted">{{ comentario.fecha_creacion|date:"d/m/Y H:i" }}</small>
-
                             {% if user.is_authenticated and user.is_superuser or user.is_authenticated and user == comentario.autor %}
                                 <div class="mt-1">
-                                    <a href="{% url 'comentar-update' comentario.id %}" class="text-warning small me-2">Editar</a>
-                                    <a href="{% url 'comentar-delete' comentario.id %}" class="text-danger small">Eliminar</a>
+                                    <a href="#" class="text-warning small me-2">Editar</a>
+                                    <a href="#" class="text-danger small">Eliminar</a>
                                 </div>
                             {% endif %}
                         </div>
