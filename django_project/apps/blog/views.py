@@ -148,7 +148,7 @@ class PostCreateView(CreateView):
 class ComentarioUpdateView(UpdateView):
     model = Comentario
     form_class = ComentarioForm
-    template_name = "comentario-eliminar.html"
+    template_name = "comentario-editar.html"
 
     def get_success_url(self):
         return reverse_lazy('post-detail', kwargs={'pk': self.object.post.pk})
@@ -159,7 +159,7 @@ class ComentarioUpdateView(UpdateView):
         return user.is_superuser or user == comentario.autor
 class ComentarioDeleteView(DeleteView):
     model = Comentario
-    template_name = "comentario_confirm_delete.html"
+    template_name = "comentario-eliminar.html"
 
     def get_success_url(self):
         return reverse_lazy('post-detail', kwargs={'pk': self.object.post.pk})
