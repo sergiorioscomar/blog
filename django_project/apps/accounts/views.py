@@ -1,5 +1,5 @@
 # apps/accounts/views.py
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import TemplateView, View
 from django.shortcuts import render, redirect
 from django.db.models import Count, Sum
@@ -7,8 +7,22 @@ from apps.blog.models import Post  # ajustá la ruta
 from apps.blog.models import Comentario  # ajustá la ruta
 from .forms import UserForm, ProfileForm
 
-class DashboardView(LoginRequiredMixin, TemplateView):
+class DashboardView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     template_name = "accounts/dashboard.html"
+        # SOLO autores o administradores
+    def test_func(self):
+        u = self.request.user
+        return (
+            u.is_superuser
+            or u.is_staff
+            or u.groups.filter(name="Autores").exists()
+            or u.has_perm("blog.add_post")
+            or u.has_perm("blog.change_post")
+        )
+
+    # Si NO tiene permiso, lo mandamos a su perfil
+    def handle_no_permission(self):
+        return redirect("/accounts/perfil/")
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)

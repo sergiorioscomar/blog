@@ -4,14 +4,14 @@ from django.urls import reverse_lazy
 from django.forms import modelform_factory
 from django.views.generic import ListView, DetailView, DeleteView, CreateView, UpdateView
 
-from .models import Post, User, Comentario, Notificacion, Categoria
-from .forms import CreatePostForm, UpdatePostForm, ComentarioForm
-from django.db.models import Q, F
+from .models import Post, User, Comentario, Notificacion, Categoria, Mensaje
+from django.db.models import Q, F 
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin,PermissionRequiredMixin, UserPassesTestMixin
 from .mixins import OwnerOrPermMixin
 from django.core.mail import send_mail
 from django.conf import settings
+from .forms import CreatePostForm, UpdatePostForm, ComentarioForm, MensajeForm
 
 
 #likes

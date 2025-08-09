@@ -1,19 +1,31 @@
 {% extends "base.html" %}
-
-{% block titulo %}Bandeja de Entrada{% endblock %}
+{% load static %}
+{% block title %}📥 Bandeja de entrada{% endblock %}
 
 {% block content %}
-<!-- Aquí va el contenido específico de la bandeja -->
-<h2>Mensajes Recibidos</h2>
-<ul>
-    {% for mensaje in mensajes %}
-    <li>
-        <strong>De:</strong> {{ mensaje.emisor.username }}<br>
-        <strong>Contenido:</strong> {{ mensaje.contenido }}<br>
-        <small>Enviado el {{ mensaje.fecha_envio }}</small>
-    </li>
-    {% empty %}
-    <li>No tienes mensajes.</li>
-    {% endfor %}
-</ul>
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">📥 Mensajes recibidos</h2>
+    <a href="{% url 'enviar_mensaje' %}" class="btn btn-sm btn-outline-primary">✉️ Nuevo mensaje</a>
+  </div>
+
+  {% if mensajes %}
+    <div class="list-group shadow-sm">
+      {% for mensaje in mensajes %}
+        <div class="list-group-item list-group-item-action">
+          <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">De: {{ mensaje.emisor.username }}</h5>
+            <small class="text-muted">{{ mensaje.fecha_envio|date:"Y-m-d H:i" }}</small>
+          </div>
+          <p class="mb-1">{{ mensaje.contenido|linebreaks }}</p>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="text-center text-muted py-5">
+      <p class="mb-1">No tienes mensajes.</p>
+      <a href="{% url 'enviar_mensaje' %}" class="btn btn-primary btn-sm">✉️ Enviar mensaje</a>
+    </div>
+  {% endif %}
+</div>
 {% endblock %}

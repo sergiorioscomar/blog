@@ -1,12 +1,57 @@
 {% extends "base.html" %}
-
-{% block titulo %}Enviar Mensaje{% endblock %}
+{% load static %}
+{% block title %}✉️ Enviar mensaje{% endblock %}
+{% block titulo %}✉️ Enviar mensaje{% endblock %}
 
 {% block content %}
-<h2>Enviar Mensaje Privado</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button class="btn btn-primary" type="submit">Enviar</button>
-</form>
+<div class="container py-4">
+  <nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Panel</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'bandeja_entrada' %}">Bandeja</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Enviar</li>
+    </ol>
+  </nav>
+
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-10 col-lg-8">
+      <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+          <h3 class="h4 mb-1">✉️ Enviar mensaje privado</h3>
+          <p class="text-muted mb-4">Escribí un mensaje a otro usuario del sitio.</p>
+
+          <form method="post" novalidate>
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+              <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+            {% endif %}
+
+            <div class="mb-3">
+              <label for="{{ form.receptor.id_for_label }}" class="form-label">Receptor</label>
+              {{ form.receptor }}
+              {% if form.receptor.errors %}
+                <div class="invalid-feedback d-block">{{ form.receptor.errors|striptags }}</div>
+              {% endif %}
+            </div>
+
+            <div class="mb-3">
+              <label for="{{ form.contenido.id_for_label }}" class="form-label">Contenido</label>
+              {{ form.contenido }}
+              <div class="form-text">Sé amable. Máx. 1000 caracteres.</div>
+              {% if form.contenido.errors %}
+                <div class="invalid-feedback d-block">{{ form.contenido.errors|striptags }}</div>
+              {% endif %}
+            </div>
+
+            <div class="d-flex gap-2">
+              <button class="btn btn-primary" type="submit">Enviar</button>
+              <a class="btn btn-outline-secondary" href="{% url 'bandeja_entrada' %}">Cancelar</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}

@@ -1,5 +1,5 @@
 
-from .models import Post, Comentario
+from .models import Post, Comentario, Mensaje
 from django import forms
 
 class CreatePostForm(forms.ModelForm):
@@ -38,3 +38,11 @@ class ComentarioForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         for field in self.fields.values():
             field.widget.attrs.update({'class': 'form-control'})
+
+class MensajeForm(forms.ModelForm):
+    class Meta:
+        model = Mensaje
+        fields = ['receptor', 'contenido']
+        widgets = {
+            'contenido': forms.Textarea(attrs={'rows':4}),
+        }
