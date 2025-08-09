@@ -2,7 +2,6 @@
 from django.urls import path
 from .views import exit, RegisterView
 from django.contrib.auth import views as auth_views
-import include
 
 urlpatterns = [
     path('logout/', exit, name='logout'),
