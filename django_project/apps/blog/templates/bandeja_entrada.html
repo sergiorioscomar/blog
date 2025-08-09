@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block titulo %}Bandeja de Entrada{% endblock %}
+
+{% block content %}
+<!-- Aquí va el contenido específico de la bandeja -->
+<h2>Mensajes Recibidos</h2>
+<ul>
+    {% for mensaje in mensajes %}
+    <li>
+        <strong>De:</strong> {{ mensaje.emisor.username }}<br>
+        <strong>Contenido:</strong> {{ mensaje.contenido }}<br>
+        <small>Enviado el {{ mensaje.fecha_envio }}</small>
+    </li>
+    {% empty %}
+    <li>No tienes mensajes.</li>
+    {% endfor %}
+</ul>
+{% endblock %}

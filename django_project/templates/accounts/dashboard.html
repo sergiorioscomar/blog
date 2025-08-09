@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Mi Panel{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">👤 Mi Panel</h2>
+    <a href="{% url 'profile_edit' %}" class="btn btn-outline-secondary btn-sm">Editar perfil</a>
+  </div>
+
+  <!-- KPIs -->
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-3"><div class="card shadow-sm"><div class="card-body">
+      <div class="small text-muted">Mis posts</div><div class="h4 mb-0">{{ kpi_posts }}</div>
+    </div></div></div>
+    <div class="col-6 col-md-3"><div class="card shadow-sm"><div class="card-body">
+      <div class="small text-muted">Vistas</div><div class="h4 mb-0">{{ kpi_views }}</div>
+    </div></div></div>
+    <div class="col-6 col-md-3"><div class="card shadow-sm"><div class="card-body">
+      <div class="small text-muted">Likes</div><div class="h4 mb-0">{{ kpi_likes }}</div>
+    </div></div></div>
+    <div class="col-6 col-md-3"><div class="card shadow-sm"><div class="card-body">
+      <div class="small text-muted">Comentarios recibidos</div><div class="h4 mb-0">{{ kpi_comentarios_recibidos }}</div>
+    </div></div></div>
+  </div>
+
+  <!-- Tabs -->
+  <ul class="nav nav-tabs mb-3" role="tablist">
+    <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-posts" type="button">Mis posts</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-notis" type="button">Notificaciones</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-comentarios" type="button">Comentarios</button></li>
+  </ul>
+
+  <div class="tab-content">
+    <!-- Mis posts -->
+    <div class="tab-pane fade show active" id="tab-posts">
+      {% if mis_posts %}
+        <div class="list-group">
+          {% for p in mis_posts %}
+            <a href="{% url 'post-detail' p.id %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+              <div>
+                <strong>{{ p.titulo }}</strong>
+                <div class="small text-muted">👁 {{ p.views|default:0 }} · ❤️ {{ p.num_likes|default:0 }}</div>
+              </div>
+              <div class="btn-group btn-group-sm">
+                <a href="{% url 'post-update' p.id %}" class="btn btn-outline-secondary">Editar</a>
+                <a href="{% url 'post-delete' p.id %}" class="btn btn-outline-danger">Eliminar</a>
+              </div>
+            </a>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="text-center text-muted py-5">No tenés posts aún. <a href="{% url 'post-create' %}">Crear uno</a></div>
+      {% endif %}
+    </div>
+
+    <!-- Notificaciones -->
+    <div class="tab-pane fade" id="tab-notis">
+      {% if ultimas_notis %}
+        <ul class="list-group">
+          {% for n in ultimas_notis %}
+            <li class="list-group-item">
+              <a href="{{ n.get_target_url|default:'#' }}">{{ n.mensaje }}</a>
+              <span class="small text-muted float-end">{{ n.creado|date:"Y-m-d H:i" }}</span>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <div class="text-muted">Sin notificaciones recientes.</div>
+      {% endif %}
+    </div>
+
+    <!-- Comentarios (quick link) -->
+    <div class="tab-pane fade" id="tab-comentarios">
+      <p class="text-muted">Comentarios que recibiste en tus posts: <strong>{{ kpi_comentarios_recibidos }}</strong></p>
+      <a class="btn btn-outline-primary btn-sm" href="{% url 'post-list' %}">Ir al blog</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

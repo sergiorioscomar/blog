@@ -25,6 +25,7 @@ class Post(models.Model):
     contenido = models.TextField(verbose_name="Contenido del Post")
     imagen = models.ImageField(null=True, blank=True, upload_to="media/posts")
     likes = models.ManyToManyField(User, related_name='liked_posts', blank=True)
+    views = models.PositiveBigIntegerField(default=0)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
 
     categoria = models.ForeignKey(Categoria, on_delete=models.SET_NULL, null=True, blank=True)
@@ -62,6 +63,19 @@ class Notificacion(models.Model):
     mensaje = models.CharField(max_length=255)
     leido = models.BooleanField(default=False)
     fecha = models.DateTimeField(auto_now_add=True)
+    mensaje_privado = models.ForeignKey('Mensaje', null=True, blank=True, on_delete=models.CASCADE)
+
 
     def __str__(self):
         return f"{self.usuario.username} - {self.mensaje[:20]}"
+    
+class Mensaje(models.Model):
+    emisor = models.ForeignKey(User, related_name='mensajes_enviados', on_delete=models.CASCADE)
+    receptor = models.ForeignKey(User, related_name='mensajes_recibidos', on_delete=models.CASCADE)
+    contenido = models.TextField()
+    fecha_envio = models.DateTimeField(auto_now_add=True)
+    leido = models.BooleanField(default=False)
+    
+
+    def __str__(self):
+        return f'Mensaje de {self.emisor.username} a {self.receptor.username} - {self.fecha_envio.strftime("%Y-%m-%d %H:%M")}'

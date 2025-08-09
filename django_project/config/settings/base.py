@@ -19,7 +19,9 @@ LOCAL_APPS = [
     # apps locales
     'apps.api',
     'apps.blog',
-    'apps.auth_app'
+    'apps.auth_app',
+    'apps.core',
+    'apps.accounts',
 ]
 
 THIRD_APPS = [
@@ -113,3 +115,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = 'post-list'
 LOGOUT_REDIRECT_URL = 'post-list'
+
+# Esto imprime el mail en la consola del servidor
+#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+#DEFAULT_FROM_EMAIL = 'no-reply@esencialtic.com.ar'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.esencialtic.com.ar'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'info@esencialtic.com.ar'
+EMAIL_HOST_PASSWORD = 'Clave2025*'
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

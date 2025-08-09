@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Editar perfil{% endblock %}
+
+{% block content %}
+<div class="container py-4" style="max-width: 760px;">
+  <h2 class="mb-3">Editar perfil</h2>
+  <form method="post" enctype="multipart/form-data" class="card shadow-sm">
+    {% csrf_token %}
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-4 text-center">
+          {% if request.user.profile.avatar %}
+            <img src="{{ request.user.profile.avatar.url }}" class="img-fluid rounded mb-2" style="max-height:140px" alt="avatar">
+          {% else %}
+            <div class="bg-light rounded d-flex align-items-center justify-content-center mb-2" style="height:140px;">Sin avatar</div>
+          {% endif %}
+          {{ pform.avatar }}
+        </div>
+        <div class="col-md-8">
+          <div class="row g-3">
+            <div class="col-md-6">{{ uform.first_name.label_tag }} {{ uform.first_name }}</div>
+            <div class="col-md-6">{{ uform.last_name.label_tag }} {{ uform.last_name }}</div>
+            <div class="col-md-12">{{ uform.email.label_tag }} {{ uform.email }}</div>
+            <div class="col-md-12">{{ pform.bio.label_tag }} {{ pform.bio }}</div>
+            <div class="col-md-6">{{ pform.website.label_tag }} {{ pform.website }}</div>
+            <div class="col-md-6">{{ pform.twitter.label_tag }} {{ pform.twitter }}</div>
+            <div class="col-md-6">{{ pform.github.label_tag }} {{ pform.github }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-footer text-end">
+      <a class="btn btn-light" href="{% url 'dashboard' %}">Cancelar</a>
+      <button class="btn btn-primary" type="submit">Guardar cambios</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

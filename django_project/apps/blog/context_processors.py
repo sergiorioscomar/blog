@@ -6,3 +6,4 @@ def notificaciones_no_leidas(request):
             'notificaciones_no_leidas': Notificacion.objects.filter(usuario=request.user, leido=False)
         }
     return {'notificaciones_no_leidas': []}
+

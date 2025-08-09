@@ -1,0 +1,15 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}Esencial TIC Admin{% endblock %}
+
+{% block extrastyle %}{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/admin-custom.css' %}">
+{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">
+  <img src="{% static 'img/logo.svg' %}" alt="" style="height:28px;vertical-align:middle;margin-right:8px;">
+  Esencial TIC · Admin
+</h1>
+{% endblock %}

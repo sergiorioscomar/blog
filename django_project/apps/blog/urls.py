@@ -18,4 +18,11 @@ urlpatterns = [
     path('post/<int:pk>/comentar/', ComentarioCreateView.as_view(), name='comentar-post'),
     path('comentario/<int:pk>/editar/', views.ComentarioUpdateView.as_view(), name='comentario-editar'),
     path('comentario/<int:pk>/eliminar/', views.ComentarioDeleteView.as_view(), name='comentario-eliminar'),
+
+    path('mensajes/enviar/', views.enviar_mensaje, name='enviar_mensaje'),
+    path('mensajes/', views.bandeja_entrada, name='bandeja_entrada'),
+    path('mensajes/<int:pk>/', views.detalle_mensaje, name='detalle_mensaje'),
+    #path("mensajes/<int:pk>/", MensajeDetalleView.as_view(), name="detalle_mensaje"),
+
+
 ]

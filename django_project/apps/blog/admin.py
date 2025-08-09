@@ -8,7 +8,8 @@ from .models import Post, Categoria, Comentario
 
 @admin.register(Post)
 class AdminPost(admin.ModelAdmin):
-    list_display = ["titulo", "fecha_creacion", "autor"]
+    list_display = ("titulo", "autor", "views", "fecha_creacion")
+    ordering = ("-views",)
 
 
 admin.site.register(Categoria)

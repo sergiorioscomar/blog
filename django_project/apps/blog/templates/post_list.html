@@ -2,85 +2,46 @@
 {% load static %}
 
 {% block content %}
-<div class="container my-5">
+<!-- Filtros compactos en una sola barra -->
+<div class="bg-light py-2 border-bottom shadow-sm">
+  <div class="container">
+    <form method="get" class="row g-2 filtros-bar">
 
-    <!-- Título -->
-    <h2 class="text-center mb-4">📝 Publicaciones</h2>
-    <p class="text-center text-muted mb-4">
-        Usa los filtros para buscar publicaciones por título, categoría, autor o rango de fechas.
-    </p>
+      <div class="col-md">
+        <input type="text" name="q" class="form-control" placeholder="Buscar">
+      </div>
 
-    <!-- Formulario de búsqueda y filtro -->
-    <form method="get" class="row g-3 mb-5 justify-content-center align-items-end">
+      <div class="col-md">
+        <select name="categoria" class="form-select">
+          <option value="todas">Categorías</option>
+          {% for categoria in categorias %}
+              <option value="{{ categoria.id }}" {% if request.GET.categoria == categoria.id|stringformat:"s" %}selected{% endif %}>
+                  {{ categoria.nombre }}
+              </option>
+          {% endfor %}
+        </select>
+      </div>
 
-        <!-- Buscar -->
-        <div class="col-md-2">
-            <label class="form-label fw-semibold">Buscar</label>
-            <input type="text" name="q" class="form-control" placeholder="Título o contenido..."
-                   value="{{ request.GET.q }}">
-        </div>
+      <div class="col-md">
+        <input type="text" name="autor" class="form-control" placeholder="Autor">
+      </div>
 
-        <!-- Categoría -->
-        <div class="col-md-2">
-            <label class="form-label fw-semibold">Categoría</label>
-            <select name="categoria" class="form-select">
-                <option value="todas">Todas</option>
-                {% for categoria in categorias %}
-                    <option value="{{ categoria.id }}" {% if request.GET.categoria == categoria.id|stringformat:"s" %}selected{% endif %}>
-                        {{ categoria.nombre }}
-                    </option>
-                {% endfor %}
-            </select>
-        </div>
+      <div class="col-md">
+        <input type="date" name="fecha_inicio" class="form-control" placeholder="Desde">
+      </div>
 
-        <!-- Autor -->
-        <div class="col-md-2">
-            <label class="form-label fw-semibold">Autor</label>
-            <input type="text" name="autor" class="form-control" placeholder="Nombre de usuario..."
-                   value="{{ request.GET.autor }}">
-        </div>
+      <div class="col-md">
+        <input type="date" name="fecha_fin" class="form-control" placeholder="Hasta">
+      </div>
 
-        <!-- Fecha inicio -->
-        <div class="col-md-2">
-            <label class="form-label fw-semibold">Desde</label>
-            <input type="date" name="fecha_inicio" class="form-control"
-                   value="{{ request.GET.fecha_inicio }}">
-        </div>
+      <div class="col-md-auto">
+        <button type="submit" class="btn btn-dark w-100">FILTRAR</button>
+      </div>
 
-        <!-- Fecha fin -->
-        <div class="col-md-2">
-            <label class="form-label fw-semibold">Hasta</label>
-            <input type="date" name="fecha_fin" class="form-control"
-                   value="{{ request.GET.fecha_fin }}">
-        </div>
-
-        <!-- Botón -->
-        <div class="col-md-2">
-            <button type="submit" class="btn btn-primary w-100">Filtrar</button>
-        </div>
     </form>
-
-    <!-- Estilos de hover -->
-    <style>
-        .post-card {
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .post-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-        }
-        .post-img-container {
-            overflow: hidden;
-            border-radius: .25rem 0 0 .25rem;
-        }
-        .post-img-container img {
-            transition: transform 0.4s ease;
-        }
-        .post-card:hover .post-img-container img {
-            transform: scale(1.1);
-        }
-    </style>
-
+  </div>
+</div>
+<div class="container my-5">
     <!-- Listado de posts -->
     {% for post in posts %}
         <div class="card mb-3 shadow-sm border-0 post-card">
