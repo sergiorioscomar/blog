@@ -14,7 +14,7 @@ class Categoria(models.Model):
         db_table = "Categorias"
         verbose_name = "Categoria"
         verbose_name_plural = "Categorias"
-        ordering = ["nombre"]
+        ordering = ["id"]
     
 
 class Post(models.Model):
