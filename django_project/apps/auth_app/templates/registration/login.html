@@ -2,61 +2,80 @@
 {% load static %}
 
 {% block content %}
-<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
-    <div class="card shadow-lg border-0" style="max-width: 400px; width: 100%;">
+<div class="container" style="min-height: 85vh;">
+  <div class="row align-items-center">
+
+    <!-- Columna de la imagen -->
+    <div class="col-md-6 d-none d-md-block p-0">
+      <img src="{% static 'img/login.png' %}" 
+           alt="Iniciar sesión"
+           class="img-fluid h-100 w-100"
+           style="object-fit: cover;">
+    </div>
+
+    <!-- Columna del formulario -->
+    <div class="col-md-6 d-flex justify-content-center">
+      <div class="card shadow-lg border-0 my-5" style="max-width: 450px; width: 100%;">
         <div class="card-body p-4">
 
-            {% if user.is_authenticated %}
-                <h3 class="card-title text-center mb-3">👋 Ya estás logeado</h3>
-                <p class="text-center">Hola, {{ user.username }}.</p>
-                <div class="text-center mt-3">
-                    <a href="{% url 'post-list' %}" class="btn btn-success">Ir al Blog</a>
-                    <a href="{% url 'logout' %}" class="btn btn-outline-danger">Cerrar sesión</a>
-                </div>
-            
-            {% else %}
-                <h3 class="card-title text-center mb-3">🔐 Iniciar Sesión</h3>
+          {% if user.is_authenticated %}
+            <h3 class="card-title text-center mb-3">👋 Ya estás logueado</h3>
+            <p class="text-center">Hola, {{ user.username }}. Ya iniciaste sesión.</p>
+            <div class="text-center mt-3">
+              <a href="{% url 'post-list' %}" class="btn btn-success">Ir al Blog</a>
+              <a href="{% url 'logout' %}" class="btn btn-outline-danger">Cerrar sesión</a>
+            </div>
 
-                {% if form.errors %}
-                    <div class="alert alert-danger text-center py-2">
-                        Usuario o contraseña incorrectos.
-                    </div>
-                {% endif %}
+          {% else %}
+            <h3 class="card-title text-center mb-3">🔐 Iniciar sesión</h3>
 
-                <form action="" method="post">
-                    {% csrf_token %}
-
-                    <!-- Usuario -->
-                    <div class="mb-3">
-                        <label for="username" class="form-label">Nombre de usuario</label>
-                        <input type="text" name="username" id="username" class="form-control" required autofocus>
-                    </div>
-
-                    <!-- Contraseña -->
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Contraseña</label>
-                        <input type="password" name="password" id="password" class="form-control" required>
-                    </div>
-
-                    <!-- Botón -->
-                    <div class="d-grid">
-                        <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
-                    </div>
-                </form>
-
-                <!-- Links -->
-                <div class="text-center mt-3">
-                    <small class="text-muted">
-                        ¿No tenés Cuenta? <a href="{% url 'register' %}">Registrate</a>
-                    </small>
-                </div>
-                <div class="text-center mt-3">
-                    <small class="text-muted">
-                        ¿Olvidaste la contraseña? <a href="{% url 'password_reset' %}">Recuperar</a>
-                    </small>
-                </div>
+            {% if form.non_field_errors %}
+              <div class="alert alert-danger py-2">
+                <ul class="mb-0">
+                  {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
             {% endif %}
+
+            <form method="post" novalidate>
+              {% csrf_token %}
+
+              {% for field in form %}
+                <div class="mb-3">
+                  <label for="{{ field.id_for_label }}" class="form-label">
+                    {{ field.label }}
+                  </label>
+                  {{ field }}
+                  {% if field.help_text %}
+                    <div class="form-text">{{ field.help_text }}</div>
+                  {% endif %}
+                  {% for error in field.errors %}
+                    <div class="text-danger small">{{ error }}</div>
+                  {% endfor %}
+                </div>
+              {% endfor %}
+
+              <div class="d-grid">
+                <button type="submit" class="btn btn-primary btn-lg">Ingresar</button>
+              </div>
+            </form>
+
+            <div class="text-center mt-3">
+              <small class="text-muted d-block">
+                ¿Olvidaste tu contraseña? <a href="{% url 'password_reset' %}">Recuperala</a>
+              </small>
+              <small class="text-muted">
+                ¿No tenés cuenta? <a href="{% url 'register' %}">Crear cuenta</a>
+              </small>
+            </div>
+          {% endif %}
+
         </div>
+      </div>
     </div>
+
+  </div>
 </div>
 {% endblock %}
