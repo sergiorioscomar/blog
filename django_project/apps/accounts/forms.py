@@ -15,8 +15,12 @@ class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ["avatar", "bio", "website", "github"]
-        widgets = {
-            "bio": forms.TextInput(attrs={"class": "form-control"}),
-            "website": forms.URLInput(attrs={"class": "form-control"}),
-            "github": forms.URLInput(attrs={"class": "form-control"}),
-        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Recorremos todos los campos para asignar clases de Bootstrap
+        for field in self.fields.values():
+            field.widget.attrs.update({
+                'class': 'form-control',
+            })
+

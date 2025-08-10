@@ -46,3 +46,10 @@ class MensajeForm(forms.ModelForm):
         widgets = {
             'contenido': forms.Textarea(attrs={'rows':4}),
         }
+    def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            # Recorremos todos los campos para asignar clases de Bootstrap
+            for field in self.fields.values():
+                field.widget.attrs.update({
+                    'class': 'form-control',
+                })

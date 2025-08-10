@@ -31,7 +31,7 @@ class PostListView(ListView):
     model = Post
     template_name = "post_list.html"
     context_object_name = "posts"
-    paginate_by = 5  # <- Cantidad de posts por página
+    paginate_by = 3  # <- Cantidad de posts por página
 
     def get_queryset(self):
         queryset = Post.objects.all()
@@ -148,7 +148,22 @@ class ComentarioCreateView(CreateView):
                 usuario=post_autor,
                 mensaje=f"{self.request.user.username} comentó tu post '{form.instance.post.titulo}'"
             )
-        
+        # Enviar mail al autor del post
+            autor_email = post_autor.email
+            if autor_email:
+                send_mail(
+                    subject=f"Nuevo comentario en tu post '{form.instance.post.titulo}'",
+                    message=(
+                        f"Hola {post_autor.username},\n\n"
+                        f"{self.request.user.username} ha comentado en tu publicación '{form.instance.post.titulo}'.\n"
+                        "¡Revisa tu post para ver el comentario!\n\n"
+                        "Saludos"
+                    ),
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[autor_email],
+                    fail_silently=True,
+                )
+
         # Enviar mail al usuario que comentó (su email)
         user_email = self.request.user.email
         if user_email:
