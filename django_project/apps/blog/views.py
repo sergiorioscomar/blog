@@ -261,3 +261,37 @@ def detalle_mensaje(request, pk):
         mensaje.leido = True
         mensaje.save()
     return render(request, 'detalle_mensaje.html', {'mensaje': mensaje})
+
+@login_required
+def bandeja(request):
+    tab = request.GET.get("tab", "historial")  # 'historial' | 'recibidos' | 'enviados'
+
+    recibidos = (Mensaje.objects
+                 .filter(receptor=request.user)
+                 .select_related("emisor", "receptor")
+                 .order_by("-fecha_envio"))
+
+    enviados = (Mensaje.objects
+                .filter(emisor=request.user)
+                .select_related("emisor", "receptor")
+                .order_by("-fecha_envio"))
+
+    if tab == "recibidos":
+        items = recibidos
+    elif tab == "enviados":
+        items = enviados
+    else:
+        # Historial: marcar dirección y mezclar
+        r = recibidos.annotate(direccion=Value("R", output_field=CharField()))
+        e = enviados.annotate(direccion=Value("E", output_field=CharField()))
+        items = sorted(chain(r, e), key=lambda m: m.fecha_envio, reverse=True)
+
+    paginator = Paginator(items, 10)  # 10 por página
+    page_obj = paginator.get_page(request.GET.get("page"))
+
+    return render(request, "bandeja.html", {
+        "tab": tab,
+        "page_obj": page_obj,
+        "recibidos_count": recibidos.count(),
+        "enviados_count": enviados.count(),
+    })

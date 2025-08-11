@@ -1,31 +1,87 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}📥 Bandeja de entrada{% endblock %}
+{% block title %}📨 Bandeja{% endblock %}
 
 {% block content %}
 <div class="container py-4">
+
   <div class="d-flex justify-content-between align-items-center mb-3">
-    <h2 class="mb-0">📥 Mensajes recibidos</h2>
+    <h2 class="mb-0">📨 Bandeja</h2>
     <a href="{% url 'enviar_mensaje' %}" class="btn btn-sm btn-outline-primary">✉️ Nuevo mensaje</a>
   </div>
 
-  {% if mensajes %}
+  <!-- Tabs -->
+  <ul class="nav nav-pills mb-3">
+    <li class="nav-item">
+      <a class="nav-link {% if tab == 'historial' %}active{% endif %}" href="?tab=historial">Historial</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {% if tab == 'recibidos' %}active{% endif %}" href="?tab=recibidos">
+        Recibidos <span class="badge bg-secondary">{{ recibidos_count }}</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {% if tab == 'enviados' %}active{% endif %}" href="?tab=enviados">
+        Enviados <span class="badge bg-secondary">{{ enviados_count }}</span>
+      </a>
+    </li>
+  </ul>
+
+  {% if page_obj.object_list %}
     <div class="list-group shadow-sm">
-      {% for mensaje in mensajes %}
-        <div class="list-group-item list-group-item-action">
-          <div class="d-flex w-100 justify-content-between">
-            <h5 class="mb-1">De: {{ mensaje.emisor.username }}</h5>
-            <small class="text-muted">{{ mensaje.fecha_envio|date:"Y-m-d H:i" }}</small>
+
+      {% for m in page_obj.object_list %}
+      <a href="{% url 'detalle_mensaje' m.pk %}" class="list-group-item list-group-item-action">
+        <div class="d-flex w-100 justify-content-between">
+          <div>
+            {% if tab == 'historial' %}
+              {% if m.direccion == 'R' %}
+                <strong>De:</strong> {{ m.emisor.username }} <span class="text-muted">→ Vos</span>
+              {% else %}
+                <strong>Para:</strong> {{ m.receptor.username }} <span class="text-muted">← Vos</span>
+              {% endif %}
+            {% elif tab == 'recibidos' %}
+              <strong>De:</strong> {{ m.emisor.username }}
+            {% else %}
+              <strong>Para:</strong> {{ m.receptor.username }}
+            {% endif %}
           </div>
-          <p class="mb-1">{{ mensaje.contenido|linebreaks }}</p>
+          <small class="text-muted">{{ m.fecha_envio|date:"Y-m-d H:i" }}</small>
         </div>
+        <p class="mb-1 text-truncate">{{ m.contenido }}</p>
+        {% if not m.leido and tab != 'enviados' %}
+          <span class="badge bg-warning text-dark">No leído</span>
+        {% endif %}
+      </a>
       {% endfor %}
+
     </div>
+
+    <!-- Paginación -->
+    <nav class="mt-3">
+      <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+          <li class="page-item">
+            <a class="page-link" href="?tab={{ tab }}&page={{ page_obj.previous_page_number }}">Anterior</a>
+          </li>
+        {% endif %}
+        <li class="page-item disabled">
+          <span class="page-link">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+        </li>
+        {% if page_obj.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="?tab={{ tab }}&page={{ page_obj.next_page_number }}">Siguiente</a>
+          </li>
+        {% endif %}
+      </ul>
+    </nav>
+
   {% else %}
     <div class="text-center text-muted py-5">
-      <p class="mb-1">No tienes mensajes.</p>
+      <p class="mb-2">No hay mensajes en <strong>{{ tab }}</strong>.</p>
       <a href="{% url 'enviar_mensaje' %}" class="btn btn-primary btn-sm">✉️ Enviar mensaje</a>
     </div>
   {% endif %}
+
 </div>
 {% endblock %}
