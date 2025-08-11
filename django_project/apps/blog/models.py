@@ -1,11 +1,25 @@
 from django.db import models
 from django.contrib.auth.models import User
+import uuid
+
 
 # modelo de categorias# Create your models here.
 
 
 class Categoria(models.Model):
     nombre = models.CharField(max_length=50, unique=True)
+    slug = models.SlugField(max_length=90, unique=True, db_index=True)
+
+    def _make_unique_slug(self):
+        s = uuid.uuid4().hex[:8]  # 8 chars
+        while Categoria.objects.filter(slug=s).exclude(pk=self.pk).exists():
+            s = uuid.uuid4().hex[:8]
+        return s
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = self._make_unique_slug()
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.nombre

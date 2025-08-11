@@ -13,11 +13,11 @@
 
       <div class="col-md">
         <select name="categoria" class="form-select">
-          <option value="todas">Categorías</option>
-          {% for categoria in categorias %}
-              <option value="{{ categoria.id }}" {% if request.GET.categoria == categoria.id|stringformat:"s" %}selected{% endif %}>
-                  {{ categoria.nombre }}
-              </option>
+          <option value="">Todas</option>
+          {% for c in categorias %}
+            <option value="{{ c.slug }}" {% if categoria_actual == c.slug %}selected{% endif %}>
+              {{ c.nombre }}
+            </option>
           {% endfor %}
         </select>
       </div>

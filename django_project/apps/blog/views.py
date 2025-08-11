@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.forms import modelform_factory
 from django.views.generic import ListView, DetailView, DeleteView, CreateView, UpdateView
-
+from django.utils.text import slugify
 from .models import Post, User, Comentario, Notificacion, Categoria, Mensaje
 from django.db.models import Q, F 
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -31,50 +31,45 @@ class PostListView(ListView):
     model = Post
     template_name = "post_list.html"
     context_object_name = "posts"
-    paginate_by = 3  # <- Cantidad de posts por página
+    paginate_by = 3
 
     def get_queryset(self):
-        queryset = Post.objects.all()
+        qs = (Post.objects
+                .select_related("categoria", "autor")
+                .order_by("-fecha_creacion"))
 
-        # Filtros GET
-        query = self.request.GET.get('q')
-        categoria = self.request.GET.get('categoria')
-        autor = self.request.GET.get('autor')
-        fecha_inicio = self.request.GET.get('fecha_inicio')
-        fecha_fin = self.request.GET.get('fecha_fin')
+        # buscador
+        q = self.request.GET.get("q")
+        if q:
+            qs = qs.filter(
+                Q(titulo__icontains=q) |
+                Q(contenido__icontains=q) |
+                Q(autor__username__icontains=q)
+            )
 
-        # Búsqueda por texto
-        if query:
-            queryset = queryset.filter(Q(titulo__icontains=query) | Q(contenido__icontains=query))
+        # categoría desde la URL: /categoria/<slug>/
+        slug = self.kwargs.get("slug")
 
-        # Filtrado por categoría
-        if categoria and categoria != "todas":
-            queryset = queryset.filter(categoria=categoria)
+        # o categoría desde ?categoria=<valor> (puede venir id o slug)
+        cat_param = self.request.GET.get("categoria")
 
-        # Filtrado por autor (texto libre)
-        if autor:
-            queryset = queryset.filter(autor__username__icontains=autor)
+        if slug:
+            qs = qs.filter(categoria__slug=slug)
 
-        # Filtrado por rango de fechas
-        if fecha_inicio:
-            queryset = queryset.filter(fecha_creacion__date__gte=fecha_inicio)
-        if fecha_fin:
-            queryset = queryset.filter(fecha_creacion__date__lte=fecha_fin)
+        elif cat_param:
+            if str(cat_param).isdigit():
+                qs = qs.filter(categoria_id=cat_param)  # compatibilidad vieja por id
+            else:
+                qs = qs.filter(categoria__slug=slugify(cat_param))  # por slug o por nombre
 
-        return queryset.order_by('-fecha_creacion')
+        return qs
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['categorias'] = Categoria.objects.all()
-
-        # Para mantener los filtros en los links de paginación
-        query_params = self.request.GET.copy()
-        if 'page' in query_params:
-            query_params.pop('page')
-        context['query_params'] = query_params.urlencode()
-
-        return context
-
+        ctx = super().get_context_data(**kwargs)
+        ctx["categorias"] = Categoria.objects.all().order_by("nombre")
+        ctx["categoria_actual"] = self.kwargs.get("slug") or self.request.GET.get("categoria")
+        ctx["q"] = self.request.GET.get("q", "")
+        return ctx
 
 # DETALLE DE POST + FORMULARIO DE COMENTARIOS
 class PostDetailView(DetailView):

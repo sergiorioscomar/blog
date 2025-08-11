@@ -1,28 +1,30 @@
-
+# apps/blog/urls.py
 from django.urls import path
 from . import views
-
-from .views import PostListView, PostDetailView, PostDeleteView, ComentarioCreateView, PostCreateView, PostUpdateView
+from .views import (
+    PostListView, PostDetailView, PostDeleteView,
+    ComentarioCreateView, PostCreateView, PostUpdateView
+)
 
 urlpatterns = [
+    # Listados
+    path("", PostListView.as_view(), name="post-list"),
+    path("categoria/<slug:slug>/", PostListView.as_view(), name="post-por-categoria"),
 
-    # urls para VBC
-    path('', PostListView.as_view(), name = "post-list"),
-    path('post/<int:pk>', PostDetailView.as_view(), name = "post-detail"),
-    path('post/<int:pk>/delete/', PostDeleteView.as_view(), name = "post-delete"),
-    path('post/<int:pk>/update', PostUpdateView.as_view(), name = "post-update"),
-    path('crear/', PostCreateView.as_view(), name = "post-create"),
-    path('post/<int:pk>/like/', views.like_post, name='like_post'),
+    # Posts
+    path("crear/", PostCreateView.as_view(), name="post-create"),
+    path("post/<int:pk>/", PostDetailView.as_view(), name="post-detail"),
+    path("post/<int:pk>/update/", PostUpdateView.as_view(), name="post-update"),
+    path("post/<int:pk>/delete/", PostDeleteView.as_view(), name="post-delete"),
+    path("post/<int:pk>/like/", views.like_post, name="like_post"),
 
+    # Comentarios
+    path("post/<int:pk>/comentar/", ComentarioCreateView.as_view(), name="comentar-post"),
+    path("comentario/<int:pk>/editar/", views.ComentarioUpdateView.as_view(), name="comentario-editar"),
+    path("comentario/<int:pk>/eliminar/", views.ComentarioDeleteView.as_view(), name="comentario-eliminar"),
 
-    path('post/<int:pk>/comentar/', ComentarioCreateView.as_view(), name='comentar-post'),
-    path('comentario/<int:pk>/editar/', views.ComentarioUpdateView.as_view(), name='comentario-editar'),
-    path('comentario/<int:pk>/eliminar/', views.ComentarioDeleteView.as_view(), name='comentario-eliminar'),
-
-    path('mensajes/enviar/', views.enviar_mensaje, name='enviar_mensaje'),
-    path('mensajes/', views.bandeja_entrada, name='bandeja_entrada'),
-    path('mensajes/<int:pk>/', views.detalle_mensaje, name='detalle_mensaje'),
-    #path("mensajes/<int:pk>/", MensajeDetalleView.as_view(), name="detalle_mensaje"),
-
-
+    # Mensajes
+    path("mensajes/enviar/", views.enviar_mensaje, name="enviar_mensaje"),
+    path("mensajes/", views.bandeja_entrada, name="bandeja_entrada"),
+    path("mensajes/<int:pk>/", views.detalle_mensaje, name="detalle_mensaje"),
 ]
