@@ -1,17 +1,12 @@
 <!-- templates/400.html -->
+{% extends 'base.html' %}
 {% load static %}
-<!doctype html>
-<html lang="es">
-<head>
-  <meta charset="utf-8">
-  <title>Solicitud incorrecta</title>
-  <link rel="stylesheet" href="{% static 'css/custom.css' %}">
-</head>
-<body>
+{% block titulo %}Solicitud incorrecta{% endblock %}
+
+{% block content %}
   <main style="max-width:720px;margin:4rem auto;text-align:center">
     <h1>😕 400 — Solicitud incorrecta</h1>
     <p>El enlace puede estar roto o haber cambiado.</p>
     <p><a href="/" style="text-decoration:underline">Volver al inicio</a></p>
   </main>
-</body>
-</html>
+{% endblock %}
