@@ -21,13 +21,14 @@ ALLOWED_HOSTS = ["serggiors.pythonanywhere.com"]
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'serggiors$default',
-        'USER': 'serggiors',
-        'PASSWORD': 'Clave2025*',
-        'HOST': 'serggiors.mysql.pythonanywhere-services.com',
-    }
-}
+# Base de datos
+#ATABASES = {
+#   'default': {
+#       'ENGINE': env('DB_ENGINE', default='django.db.backends.mysql'),
+#       'NAME': env('DB_NAME'),
+#       'USER': env('DB_USER'),
+#       'PASSWORD': env('DB_PASSWORD'),
+#       'HOST': env('DB_HOST', default='localhost'),
+#       'PORT': env('DB_PORT', default='3306'),
+#   }
+#}
