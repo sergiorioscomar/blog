@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+
 {% block title %}Mi Panel{% endblock %}
 
 {% block content %}
@@ -17,7 +18,7 @@
   <!-- KPIs -->
   <div class="row g-3 mb-4">
     <div class="col-6 col-md-3"><div class="card shadow-sm"><div class="card-body">
-      <div class="small text-muted">Mis posts</div><div class="h4 mb-0">{{ kpi_posts }}</div>
+      <div class="small text-muted">Mis publicaciones</div><div class="h4 mb-0">{{ kpi_posts }}</div>
     </div></div></div>
     <div class="col-6 col-md-3"><div class="card shadow-sm"><div class="card-body">
       <div class="small text-muted">Vistas</div><div class="h4 mb-0">{{ kpi_views }}</div>
@@ -32,8 +33,7 @@
 
   <!-- Tabs -->
   <ul class="nav nav-tabs mb-3" role="tablist">
-    <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-posts" type="button">Mis posts</button></li>
-    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-notis" type="button">Notificaciones</button></li>
+    <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-posts" type="button">Mis Publicaciones</button></li>
     <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-comentarios" type="button">Comentarios</button></li>
   </ul>
 
@@ -78,7 +78,42 @@
 
     <!-- Comentarios (quick link) -->
     <div class="tab-pane fade" id="tab-comentarios">
-      <p class="text-muted">Comentarios que recibiste en tus posts: <strong>{{ kpi_comentarios_recibidos }}</strong></p>
+      <h5 class="mb-3">Comentarios que recibiste en tus Publicaciones ({{ comments_total }})</h5>
+        {% if comments_received %}
+          <div class="list-group shadow-sm">
+            {% for c in comments_received %}
+              <div class="list-group-item">
+                <div class="small text-muted mb-1">
+                  En <a href="{% url 'post-detail' c.post.pk %}">{{ c.post.titulo }}</a>
+                  · por <a href="{% url 'public_profile' c.autor.username %}">@{{ c.autor.username }}</a>
+                  · {{ c.fecha_creacion|date:"d/m/Y H:i" }}
+                </div>
+                <div>{{ c.contenido|linebreaksbr }}</div>
+              </div>
+            {% endfor %}
+          </div>
+
+          <nav class="mt-3">
+            <ul class="pagination pagination-sm">
+              {% if comments_received.has_previous %}
+                <li class="page-item">
+                  <a class="page-link" href="?cpage={{ comments_received.previous_page_number }}">Anterior</a>
+                </li>
+              {% endif %}
+              <li class="page-item disabled">
+                <span class="page-link">Página {{ comments_received.number }} de {{ comments_received.paginator.num_pages }}</span>
+              </li>
+              {% if comments_received.has_next %}
+                <li class="page-item">
+                  <a class="page-link" href="?cpage={{ comments_received.next_page_number }}">Siguiente</a>
+                </li>
+              {% endif %}
+            </ul>
+          </nav>
+        {% else %}
+          <p class="text-muted">Aún no recibiste comentarios.</p>
+        {% endif %}
+
       <a class="btn btn-outline-primary btn-sm" href="{% url 'post-list' %}">Ir al blog</a>
     </div>
   </div>

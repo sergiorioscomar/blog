@@ -1,0 +1,10 @@
+<!doctype html>
+<html>
+  <body>
+    <h3>Nuevo mensaje de {{ mensaje.emisor.username }}</h3>
+    <p><em>"{{ mensaje.contenido|linebreaksbr }}"</em></p>
+    <p><a href="{{ link }}">Ver el mensaje</a></p>
+    <hr>
+    <small>Para: {{ mensaje.receptor.username }} · {{ mensaje.fecha_envio|date:"Y-m-d H:i" }}</small>
+  </body>
+</html>

@@ -1,0 +1,8 @@
+¡Hola {{ user.username }}!
+
+Bienvenido/a a EsencialTIC 🎉
+
+Ya podés iniciar sesión y empezar a publicar o comentar.
+Enlace: {{ site_url }}
+
+— El equipo de EsencialTIC

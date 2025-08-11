@@ -2,100 +2,208 @@
 {% load static %}
 
 {% block content %}
-<!-- Filtros compactos en una sola barra -->
+
+<!-- Barra de filtros (tuya) -->
 <div class="bg-light py-2 border-bottom shadow-sm">
   <div class="container">
     <form method="get" class="row g-2 filtros-bar">
-
       <div class="col-md">
-        <input type="text" name="q" class="form-control" placeholder="Buscar">
+        <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Buscar">
       </div>
-
       <div class="col-md">
         <select name="categoria" class="form-select">
           <option value="">Todas</option>
           {% for c in categorias %}
-            <option value="{{ c.slug }}" {% if categoria_actual == c.slug %}selected{% endif %}>
-              {{ c.nombre }}
-            </option>
+            <option value="{{ c.slug }}" {% if categoria_actual == c.slug %}selected{% endif %}>{{ c.nombre }}</option>
           {% endfor %}
         </select>
       </div>
-
       <div class="col-md">
         <input type="text" name="autor" class="form-control" placeholder="Autor">
       </div>
-
       <div class="col-md">
         <input type="date" name="fecha_inicio" class="form-control" placeholder="Desde">
       </div>
-
       <div class="col-md">
         <input type="date" name="fecha_fin" class="form-control" placeholder="Hasta">
       </div>
-
       <div class="col-md-auto">
         <button type="submit" class="btn btn-dark w-100">FILTRAR</button>
       </div>
-
     </form>
   </div>
 </div>
+
 <div class="container my-5">
-    <!-- Listado de posts -->
-    {% for post in posts %}
-        <div class="card mb-3 shadow-sm border-0 post-card">
-            <div class="row g-0">
-                <div class="col-md-3 post-img-container">
-                    {% if post.imagen %}
-                        <img src="{{ post.imagen.url }}" class="img-fluid h-100 w-100"
-                             alt="{{ post.titulo }}" style="height:150px; object-fit: cover;">
-                    {% else %}
-                        <img src="{% static 'img/default-post.jpg' %}" class="img-fluid h-100 w-100"
-                             alt="Imagen por defecto" style="height:150px; object-fit: cover;">
-                    {% endif %}
-                </div>
-                <div class="col-md-9">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ post.titulo }}</h5>
-                        <p class="card-text text-muted mb-2">
-                            Publicado el {{ post.fecha_creacion|date:"d/m/Y" }} 
-                            por <strong>{{ post.autor }}</strong>
-                        </p>
-                        <p class="card-text">{{ post.contenido|truncatechars:150 }}</p>
-                        <a href="{% url 'post-detail' post.id %}" class="btn btn-primary btn-sm">Ver más</a>
-                    </div>
-                </div>
-            </div>
+
+  {# ======= Destacado ======= #}
+{% if featured or latest %}
+<h3 class="text-center mb-4">Últimas noticias</h3>
+
+<div id="featuredCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="2000">
+  <div class="carousel-inner">
+
+    {% if featured %}
+    <div class="carousel-item active">
+      <div class="row align-items-center g-4">
+        <div class="col-md-5">
+          <a href="{% url 'post-detail' featured.id %}">
+            {% if featured.imagen %}
+              <img src="{{ featured.imagen.url }}" class="img-fluid rounded-4 shadow-sm" alt="{{ featured.titulo }}">
+            {% else %}
+              <img src="{% static 'img/default-post.jpg' %}" class="img-fluid rounded-4 shadow-sm" alt="{{ featured.titulo }}">
+            {% endif %}
+          </a>
         </div>
-    {% empty %}
-        <p class="text-center mt-5 text-muted">😢 No se encontraron resultados.</p>
-    {% endfor %}
-
-    <!-- Paginación -->
-    {% if is_paginated %}
-        <nav>
-        <ul class="pagination justify-content-center">
-            {% if page_obj.has_previous %}
-            <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.previous_page_number }}&{{ query_params }}">Anterior</a>
-            </li>
-            {% endif %}
-
-            <li class="page-item disabled">
-            <span class="page-link">
-                Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
-            </span>
-            </li>
-
-            {% if page_obj.has_next %}
-            <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.next_page_number }}&{{ query_params }}">Siguiente</a>
-            </li>
-            {% endif %}
-        </ul>
-        </nav>
+        <div class="col-md-7">
+          <h4 class="mb-2">
+            <a class="text-decoration-none" href="{% url 'post-detail' featured.id %}">{{ featured.titulo }}</a>
+          </h4>
+          <p class="text-muted">{{ featured.contenido|striptags|truncatechars:220 }}</p>
+          <div class="small text-muted">
+            Por <a href="{% url 'public_profile' username=featured.autor.username %}">{{ featured.autor.username }}</a>
+            · {{ featured.fecha_creacion|date:"d/m/Y" }}
+          </div>
+        </div>
+      </div>
+    </div>
     {% endif %}
 
+    {% for p in latest %}
+    <div class="carousel-item">
+      <div class="row align-items-center g-4">
+        <div class="col-md-5">
+          <a href="{% url 'post-detail' p.id %}">
+            {% if p.imagen %}
+              <img src="{{ p.imagen.url }}" class="img-fluid rounded-4 shadow-sm" alt="{{ p.titulo }}">
+            {% else %}
+              <img src="{% static 'img/default-post.jpg' %}" class="img-fluid rounded-4 shadow-sm" alt="{{ p.titulo }}">
+            {% endif %}
+          </a>
+        </div>
+        <div class="col-md-7">
+          <h4 class="mb-2">
+            <a class="text-decoration-none" href="{% url 'post-detail' p.id %}">{{ p.titulo }}</a>
+          </h4>
+          <p class="text-muted">{{ p.contenido|striptags|truncatechars:220 }}</p>
+          <div class="small text-muted">
+            Por <a href="{% url 'public_profile' username=p.autor.username %}">{{ p.autor.username }}</a>
+            · {{ p.fecha_creacion|date:"d/m/Y" }}
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+
+  </div>
+
+  <!-- Controles opcionales -->
+  <button class="carousel-control-prev" type="button" data-bs-target="#featuredCarousel" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon"></span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#featuredCarousel" data-bs-slide="next">
+    <span class="carousel-control-next-icon"></span>
+  </button>
+
 </div>
+{% endif %}
+
+  {# ======= Lo más visto ======= #}
+  {% if most_viewed %}
+    <h4 class="text-center mb-3">Lo más visto</h4>
+    <div class="row g-4 mb-5">
+      {% for p in most_viewed %}
+        <div class="col-md-4">
+          <div class="card border-0 shadow-sm rounded-4 h-100">
+            <a href="{% url 'post-detail' p.id %}">
+              {% if p.imagen %}
+                <img src="{{ p.imagen.url }}" class="card-img-top rounded-top-4" alt="{{ p.titulo }}">
+              {% else %}
+                <img src="{% static 'img/default-post.jpg' %}" class="card-img-top rounded-top-4" alt="{{ p.titulo }}">
+              {% endif %}
+            </a>
+            <div class="card-body">
+              <h6 class="card-title">
+                <a href="{% url 'post-detail' p.id %}" class="stretched-link text-decoration-none">{{ p.titulo }}</a>
+              </h6>
+              <p class="card-text small text-muted">{{ p.contenido|striptags|truncatechars:140 }}</p>
+              <div class="d-flex align-items-center gap-2 small text-muted">
+                {% if p.autor.profile.avatar %}
+                  <img src="{{ p.autor.profile.avatar.url }}" class="rounded-circle" width="20" height="20" alt="">
+                {% else %}
+                  <img src="{% static 'img/avatar-default.png' %}" class="rounded-circle" width="20" height="20" alt="">
+                {% endif %}
+                <a href="{% url 'public_profile' username=p.autor.username %}">
+                  {{ p.autor.username }}
+                </a>
+                · {{ p.fecha_creacion|date:"d/m/Y" }}
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {# ======= Listado general (tu loop), evitando repetir el destacado en la página 1 ======= #}
+  <h5 class="mb-3">Todos los posts</h5>
+
+  {% for post in posts %}
+    {% if not featured or page_obj.number != 1 or post.id != featured.id %}
+      <div class="card mb-3 shadow-sm border-0 post-card">
+        <div class="row g-0">
+          <div class="col-md-3 post-img-container">
+            {% if post.imagen %}
+              <img src="{{ post.imagen.url }}" class="img-fluid h-100 w-100" alt="{{ post.titulo }}" style="height:150px; object-fit: cover;">
+            {% else %}
+              <img src="{% static 'img/default-post.jpg' %}" class="img-fluid h-100 w-100" alt="Imagen por defecto" style="height:150px; object-fit: cover;">
+            {% endif %}
+          </div>
+          <div class="col-md-9">
+            <div class="card-body">
+              <h5 class="card-title">{{ post.titulo }}</h5>
+              <p class="card-text text-muted mb-2">
+                Publicado el {{ post.fecha_creacion|date:"d/m/Y" }}
+                por
+                <a href="{% url 'public_profile' username=post.autor.username %}">
+                  <strong>{{ post.autor.username }}</strong>
+                </a>
+              </p>
+              <p class="card-text">{{ post.contenido|truncatechars:150 }}</p>
+              <a href="{% url 'post-detail' post.id %}" class="btn btn-primary btn-sm">Ver más</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  {% empty %}
+    <p class="text-center mt-5 text-muted">😢 No se encontraron resultados.</p>
+  {% endfor %}
+
+  {# ======= Paginación (la tuya) ======= #}
+  {% if is_paginated %}
+    <nav>
+      <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}&{{ query_params }}">Anterior</a>
+          </li>
+        {% endif %}
+        <li class="page-item disabled">
+          <span class="page-link">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+        </li>
+        {% if page_obj.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}&{{ query_params }}">Siguiente</a>
+          </li>
+        {% endif %}
+      </ul>
+    </nav>
+  {% endif %}
+
+</div>
+
+<style>
+  .rounded-top-4 { border-top-left-radius: 1rem; border-top-right-radius: 1rem; }
+</style>
 {% endblock %}

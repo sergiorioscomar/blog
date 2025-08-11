@@ -78,7 +78,7 @@
 
   {% else %}
     <div class="text-center text-muted py-5">
-      <p class="mb-2">No hay mensajes en <strong>{{ tab }}</strong>.</p>
+      <p>No hay mensajes en <strong>{{ tab_label }}</strong>.</p>
       <a href="{% url 'enviar_mensaje' %}" class="btn btn-primary btn-sm">✉️ Enviar mensaje</a>
     </div>
   {% endif %}

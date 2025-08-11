@@ -26,5 +26,6 @@ urlpatterns = [
     # Mensajes
     path("mensajes/enviar/", views.enviar_mensaje, name="enviar_mensaje"),
     path("mensajes/", views.bandeja_entrada, name="bandeja_entrada"),
+    # path("mensajes/", views.bandeja, name="bandeja_entrada"),
     path("mensajes/<int:pk>/", views.detalle_mensaje, name="detalle_mensaje"),
 ]

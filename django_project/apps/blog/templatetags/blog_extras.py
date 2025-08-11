@@ -1,5 +1,8 @@
 # apps/blog/templatetags/blog_extras.py
 from django import template
+from django.urls import reverse
+from django.utils.html import format_html
+from django.contrib.auth.models import AnonymousUser
 
 register = template.Library()
 

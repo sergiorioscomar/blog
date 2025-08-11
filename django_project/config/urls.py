@@ -36,6 +36,6 @@ urlpatterns = [
     path('', include('apps.auth_app.urls')),
     # urls de accounts
     path('accounts/', include('apps.accounts.urls')),
-    
+    # path("accounts/", include("apps.accounts.urls", namespace="accounts")),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

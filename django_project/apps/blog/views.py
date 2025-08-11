@@ -5,13 +5,15 @@ from django.forms import modelform_factory
 from django.views.generic import ListView, DetailView, DeleteView, CreateView, UpdateView
 from django.utils.text import slugify
 from .models import Post, User, Comentario, Notificacion, Categoria, Mensaje
-from django.db.models import Q, F 
+from django.db.models import Q, F , Case, When, Value, CharField
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin,PermissionRequiredMixin, UserPassesTestMixin
 from .mixins import OwnerOrPermMixin
 from django.core.mail import send_mail
 from django.conf import settings
 from .forms import CreatePostForm, UpdatePostForm, ComentarioForm, MensajeForm
+from django.http import HttpResponseForbidden
+from django.core.paginator import Paginator
 
 
 #likes
@@ -31,12 +33,15 @@ class PostListView(ListView):
     model = Post
     template_name = "post_list.html"
     context_object_name = "posts"
-    paginate_by = 3
+    paginate_by = 9
+    ordering = ["-fecha_creacion"]
 
     def get_queryset(self):
-        qs = (Post.objects
-                .select_related("categoria", "autor")
-                .order_by("-fecha_creacion"))
+        qs = (
+            Post.objects
+            .select_related("categoria", "autor")   # si categoria es M2M, usa prefetch_related("categoria")
+            .order_by("-fecha_creacion")
+        )
 
         # buscador
         q = self.request.GET.get("q")
@@ -50,17 +55,16 @@ class PostListView(ListView):
         # categoría desde la URL: /categoria/<slug>/
         slug = self.kwargs.get("slug")
 
-        # o categoría desde ?categoria=<valor> (puede venir id o slug)
+        # o ?categoria=<valor> (id o slug/nombre)
         cat_param = self.request.GET.get("categoria")
 
         if slug:
             qs = qs.filter(categoria__slug=slug)
-
         elif cat_param:
             if str(cat_param).isdigit():
-                qs = qs.filter(categoria_id=cat_param)  # compatibilidad vieja por id
+                qs = qs.filter(categoria_id=cat_param)
             else:
-                qs = qs.filter(categoria__slug=slugify(cat_param))  # por slug o por nombre
+                qs = qs.filter(categoria__slug=slugify(cat_param))
 
         return qs
 
@@ -69,6 +73,26 @@ class PostListView(ListView):
         ctx["categorias"] = Categoria.objects.all().order_by("nombre")
         ctx["categoria_actual"] = self.kwargs.get("slug") or self.request.GET.get("categoria")
         ctx["q"] = self.request.GET.get("q", "")
+
+        # === NUEVO: armado para home tipo "destacado + lo más visto" ===
+        qs = self.object_list  # ya viene filtrado/ordenado por fecha desc
+
+        featured = qs.first()
+        ctx["featured"] = featured
+
+        # siguientes 3 (evitando repetir el destacado)
+        if featured:
+            ctx["latest"] = qs[1:4]
+        else:
+            ctx["latest"] = qs[:3]
+
+        # top 3 por vistas (respetando filtros aplicados)
+        try:
+            ctx["most_viewed"] = qs.order_by("-views", "-fecha_creacion")[:3]
+        except Exception:
+            # si no tenés campo views, comentá lo de arriba y usá fecha_creacion nomás
+            ctx["most_viewed"] = qs[:3]
+
         return ctx
 
 # DETALLE DE POST + FORMULARIO DE COMENTARIOS
@@ -233,65 +257,85 @@ def index(request):
 
 @login_required
 def enviar_mensaje(request):
-    if request.method == 'POST':
-        form = MensajeForm(request.POST)
+    initial = {}
+    to_username = request.GET.get("to")
+    if to_username:
+        from django.contrib.auth import get_user_model
+        U = get_user_model()
+        u = U.objects.filter(username=to_username).first()
+        if u:
+            initial["receptor"] = u  # ModelChoiceField acepta instancia
+
+    if request.method == "POST":
+        form = MensajeForm(request.POST, user=request.user)
         if form.is_valid():
-            mensaje = form.save(commit=False)
-            mensaje.emisor = request.user
-            mensaje.save()
-            Notificacion.objects.create(
-                usuario=mensaje.receptor,
-                mensaje=f"Nuevo mensaje de {mensaje.emisor.username}",
-                mensaje_privado=mensaje
-            )
-            return redirect('bandeja_entrada') 
+            m = form.save(commit=False)
+            m.emisor = request.user
+            m.save()
+            return redirect("bandeja_entrada")
     else:
-        form = MensajeForm()
-    return render(request, 'enviar_mensaje.html', {'form': form})
+        form = MensajeForm(user=request.user, initial=initial)
+
+    return render(request, "mensajes/enviar_mensaje.html", {"form": form})
 
 @login_required
 def bandeja_entrada(request):
-    mensajes = Mensaje.objects.filter(receptor=request.user).order_by('-fecha_envio')
-    return render(request, 'bandeja_entrada.html', {'mensajes': mensajes})
+    user = request.user
+    tab = request.GET.get("tab", "recibidos")
+    if tab not in ("historial", "recibidos", "enviados"):
+        tab = "recibidos"
+
+    # Recibidos y enviados base (con 'direccion' para el template)
+    qs_recibidos = (Mensaje.objects
+        .filter(receptor=user)
+        .select_related("emisor", "receptor")
+        .order_by("-fecha_envio")
+        .annotate(direccion=Value("R", output_field=CharField())))
+
+    qs_enviados = (Mensaje.objects
+        .filter(emisor=user)
+        .select_related("emisor", "receptor")
+        .order_by("-fecha_envio")
+        .annotate(direccion=Value("E", output_field=CharField())))
+
+    if tab == "historial":
+        qs = (Mensaje.objects
+            .filter(Q(receptor=user) | Q(emisor=user))
+            .select_related("emisor", "receptor")
+            .annotate(
+                direccion=Case(
+                    When(receptor=user, then=Value("R")),
+                    default=Value("E"),
+                    output_field=CharField(),
+                )
+            )
+            .order_by("-fecha_envio"))
+    elif tab == "recibidos":
+        qs = qs_recibidos
+    else:  # enviados
+        qs = qs_enviados
+
+    paginator = Paginator(qs, 10)
+    page_obj = paginator.get_page(request.GET.get("page"))
+
+    return render(request, "mensajes/bandeja_entrada.html", {
+        "tab": tab,
+        "tab_label": {"historial": "Historial", "recibidos": "Recibidos", "enviados": "Enviados"}[tab],
+        "page_obj": page_obj,
+        "recibidos_count": qs_recibidos.count(),
+        "enviados_count": qs_enviados.count(),
+    })
 
 @login_required
 def detalle_mensaje(request, pk):
-    mensaje = get_object_or_404(Mensaje, pk=pk, receptor=request.user)
-    if not mensaje.leido:
-        mensaje.leido = True
-        mensaje.save()
-    return render(request, 'detalle_mensaje.html', {'mensaje': mensaje})
+    m = get_object_or_404(Mensaje, pk=pk)
+    # Seguridad: solo emisor o receptor pueden ver
+    if m.emisor_id != request.user.id and m.receptor_id != request.user.id:
+        return HttpResponseForbidden("No autorizado.")
 
-@login_required
-def bandeja(request):
-    tab = request.GET.get("tab", "historial")  # 'historial' | 'recibidos' | 'enviados'
+    # Marcar leído si lo abre el receptor
+    if m.receptor_id == request.user.id and not m.leido:
+        m.leido = True
+        m.save(update_fields=["leido"])
 
-    recibidos = (Mensaje.objects
-                 .filter(receptor=request.user)
-                 .select_related("emisor", "receptor")
-                 .order_by("-fecha_envio"))
-
-    enviados = (Mensaje.objects
-                .filter(emisor=request.user)
-                .select_related("emisor", "receptor")
-                .order_by("-fecha_envio"))
-
-    if tab == "recibidos":
-        items = recibidos
-    elif tab == "enviados":
-        items = enviados
-    else:
-        # Historial: marcar dirección y mezclar
-        r = recibidos.annotate(direccion=Value("R", output_field=CharField()))
-        e = enviados.annotate(direccion=Value("E", output_field=CharField()))
-        items = sorted(chain(r, e), key=lambda m: m.fecha_envio, reverse=True)
-
-    paginator = Paginator(items, 10)  # 10 por página
-    page_obj = paginator.get_page(request.GET.get("page"))
-
-    return render(request, "bandeja.html", {
-        "tab": tab,
-        "page_obj": page_obj,
-        "recibidos_count": recibidos.count(),
-        "enviados_count": enviados.count(),
-    })
+    return render(request, "mensajes/detalle_mensaje.html", {"mensaje": m})

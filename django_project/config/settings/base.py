@@ -127,3 +127,8 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'info@esencialtic.com.ar'
 EMAIL_HOST_PASSWORD = 'Clave2025*'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+# Dev
+SITE_URL = "http://localhost:8000"
+# Prod (ejemplo)
+# SITE_URL = "https://tu-dominio.com"

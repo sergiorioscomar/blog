@@ -98,16 +98,57 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-dark text-light py-4 mt-5">
-        <div class="container text-center">
-            <p class="mb-1">&copy; 2025 - Blog esencialtic</p>
-            <div>
-                <a href="https://instagram.com/esencialtic" class="text-light me-3"><i class="bi bi-instagram"></i></a>
-                <a href="https://facebook.com/esencialtic" class="text-light me-3"><i class="bi bi-facebook"></i></a>
-                <a href="https://twitter.com/esencialtic" class="text-light"><i class="bi bi-twitter-x"></i></a>
+<!-- Footer -->
+<footer class="footer-dark mt-5">
+    <div class="container py-5">
+        <div class="row">
+
+            <!-- Columna 1: Logo y descripción -->
+            <div class="col-md-4 mb-4">
+                <h5 class="footer-title mb-2 text-light">Blog Esencial TIC</h5>
+                <p class="footer-text small">
+                    Noticias, tutoriales y recursos sobre tecnología, seguridad y desarrollo web.
+                </p>
+                <div class="d-flex gap-2 mt-3">
+                    <a href="https://instagram.com/esencialtic" class="social-btn" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                    <a href="https://facebook.com/esencialtic" class="social-btn" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+                    <a href="https://twitter.com/esencialtic" class="social-btn" aria-label="X (Twitter)"><i class="bi bi-twitter-x"></i></a>
+                </div>
             </div>
+
+            <!-- Columna 2: Categorías -->
+            <div class="col-md-4 mb-4">
+                <h6 class="footer-subtitle mb-3">Categorías</h6>
+                <div class="d-flex flex-wrap gap-2">
+                    {% for cat in categorias %}
+                        <a href="/blog/categoria/{{ cat.slug }}" class="chip-link">{{ cat.nombre }}</a>
+                    {% empty %}
+                        <span class="text-muted small">Sin categorías aún</span>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Columna 3: Enlaces rápidos -->
+            <div class="col-md-4 mb-4">
+                <h6 class="footer-subtitle mb-3">Enlaces rápidos</h6>
+                <ul class="list-unstyled">
+                    <li><a href="{% url 'post-list' %}" class="footer-link">Inicio</a></li>
+                    <li><a href="{% url 'dashboard' %}" class="footer-link">Mi Panel</a></li>
+                    <li><a href="{% url 'login' %}" class="footer-link">Iniciar sesión</a></li>
+                    <li><a href="{% url 'register' %}" class="footer-link">Registrarse</a></li>
+                </ul>
+            </div>
+
         </div>
-    </footer>
+
+        <!-- Línea inferior -->
+        <hr class="footer-divider">
+        <div class="text-center small text-secondary-400">
+            &copy; 2025 - Blog Esencial TIC | Todos los derechos reservados
+        </div>
+    </div>
+</footer>
+
 
     <!-- Bootstrap JS Bundle -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 import uuid
+from django.urls import reverse
 
 
 # modelo de categorias# Create your models here.
@@ -44,6 +45,9 @@ class Post(models.Model):
 
     categoria = models.ForeignKey(Categoria, on_delete=models.SET_NULL, null=True, blank=True)
 
+    def get_absolute_url(self):
+        return reverse("blog:post_detail", args=[self.pk])
+    
     def __str__(self):
         return self.titulo
     

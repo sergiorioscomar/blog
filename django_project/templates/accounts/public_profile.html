@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Perfil de {{ object.username }}{% endblock %}
+
+{% block content %}
+<div class="container py-4" style="max-width: 760px;">
+  <div class="card shadow-sm border-0">
+    <div class="card-body d-flex gap-3 align-items-center">
+
+      <img
+        class="rounded-circle"
+        style="width: 96px; height: 96px; object-fit: cover;"
+        alt="Avatar"
+        src="{% if object.profile and object.profile.avatar %}{{ object.profile.avatar.url }}{% else %}{% static 'img/avatar-default.png' %}{% endif %}"
+      />
+
+      <div>
+        <h3 class="mb-1">{{ object.get_full_name|default:object.username }}</h3>
+        <div class="text-muted">@{{ object.username }}</div>
+
+        {% if object.profile and object.profile.bio %}
+          <p class="mt-2 mb-0">{{ object.profile.bio }}</p>
+        {% endif %}
+
+        <div class="mt-2 d-flex flex-wrap gap-3">
+          {% if object.profile and object.profile.website %}
+            <a href="{{ object.profile.website }}" target="_blank" rel="noopener">🌐 Sitio</a>
+          {% endif %}
+          {% if object.profile and object.profile.github %}
+            <a href="{{ object.profile.github }}" target="_blank" rel="noopener">🐙 GitHub</a>
+          {% endif %}
+          {% if object.profile and object.profile.twitter %}
+            <a href="{{ object.profile.twitter }}" target="_blank" rel="noopener">𝕏 Twitter</a>
+          {% endif %}
+          {% if object.profile and object.profile.linkedin %}
+            <a href="{{ object.profile.linkedin }}" target="_blank" rel="noopener">🔗 LinkedIn</a>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

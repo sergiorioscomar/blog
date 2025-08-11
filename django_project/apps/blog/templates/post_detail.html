@@ -15,8 +15,12 @@
                 {% endif %}
                 <div class="card-body">
                 <h1 class="card-title text-center">{{ posts.titulo }}</h1>
-                <p class="text-muted text-center mb-2">
+                <!--<p class="text-muted text-center mb-2">
                     Publicado por <strong>{{ posts.autor }}</strong> el {{ posts.fecha_creacion|date:"d/m/Y H:i" }}
+                </p>
+                {# autor de un post #}-->
+                <p class="text-muted text-center mb-2">
+                    Publicado por <strong><a href="{% url 'public_profile' username=posts.autor.username %}">{{ posts.autor.username }}</a></strong> el {{ posts.fecha_creacion|date:"d/m/Y H:i" }}
                 </p>
                 <hr>
                 <p class="card-text fs-5">{{ posts.contenido|linebreaks }}</p>
@@ -106,7 +110,9 @@
 
                     {% for comentario in posts.comentarios.all %}
                         <div class="border-bottom py-2">
-                            <p class="mb-1"><strong>{{ comentario.autor }}</strong> dijo:</p>
+                            {# autor de un comentario #}
+                            <a href="{% url 'public_profile' username=comentario.autor.username %}">
+                               <strong>{{ comentario.autor.username }}</strong></a> dijo:</p>
                             <p class="mb-1">{{ comentario.contenido }}</p>
                             <small class="text-muted">{{ comentario.fecha_creacion|date:"d/m/Y H:i" }}</small>
                             {% if user.is_authenticated and user.is_superuser or user.is_authenticated and user == comentario.autor %}
@@ -129,12 +135,7 @@
 
 <!-- Efecto hover para navegación -->
 <style>
-    .post-nav-card img {
-        transition: transform 0.3s ease;
-    }
-    .post-nav-card:hover img {
-        transform: scale(1.05);
-    }
+
 </style>
 
 {% endblock %}

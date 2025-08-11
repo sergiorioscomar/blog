@@ -1,0 +1,9 @@
+Hola {{ mensaje.receptor.username }},
+
+Recibiste un nuevo mensaje de {{ mensaje.emisor.username }}:
+
+"{{ mensaje.contenido|truncatechars:200 }}"
+
+Ver el mensaje: {{ link }}
+
+— EsencialTIC
