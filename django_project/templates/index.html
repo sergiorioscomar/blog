@@ -1,9 +1,95 @@
-{% extends 'base.html' %}
-{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block titulo %}Blog esencialtic{% endblock %}</title>
+    {% load static %}
+    {% load blog_extras %}
+    <!-- Bootswatch Lux CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/lux/bootstrap.min.css">
+    <!-- css personalizado -->
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+    <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
-{% block titulo %}Inicio{% endblock %}
 
-{% block content %}
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+<!-- Navbar -->
+    <!-- Barra superior: Categorías -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark py-1">
+    <div class="container-fluid">
+        <ul class="navbar-nav me-auto mb-0">
+            <li class="nav-item"><a class="nav-link" href="/blog/?q=&categoria=1"></a></li>
+        </ul>
+        <!-- Buscador -->
+        <form class="d-flex" action="/blog/?q=" method="get">
+            <input class="form-control form-control-sm" type="search" name="q" placeholder="Buscar..." aria-label="Buscar">
+            <button class="btn btn-outline-light btn-sm ms-2" type="submit"><i class="bi bi-search"></i></button>
+        </form>
+    </div>
+</nav>
+<!-- Barra inferior: Logo + Usuario -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+        <!-- Logo -->
+        <a class="navbar-brand fw-bold" href="{% url 'post-list' %}">
+            <img src="{% static 'img/logo.png' %}" alt="Logo" width="30" height="30" class="d-inline-block align-text-top">
+            Blog EsencialTIC
+        </a>
+
+        <!-- Botón hamburguesa -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#userNavbar"
+                aria-controls="userNavbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Menú usuario -->
+        <div class="collapse navbar-collapse" id="userNavbar">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    {% is_autor user as es_autor %}
+                    {% if es_autor %}
+                        <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="notificacionesDropdown" role="button" data-bs-toggle="dropdown">
+                            🔔 Notificaciones 
+                            {% if notificaciones_no_leidas %}
+                                <span class="badge bg-danger">{{ notificaciones_no_leidas|length }}</span>
+                            {% endif %}
+                        </a>
+                        <ul class="dropdown-menu">
+                            {% for n in notificaciones_no_leidas %}
+                                {% if n.mensaje_privado %}
+                                    <li>
+                                        <a class="dropdown-item" href="{% url 'detalle_mensaje' n.mensaje_privado.id %}">
+                                            {{ n.mensaje }}
+                                        </a>
+                                    </li>
+                                {% else %}
+                                    <li><span class="dropdown-item text-muted">{{ n.mensaje }}</span></li>
+                                {% endif %}
+                            {% empty %}
+                                <li><span class="dropdown-item text-muted">Sin notificaciones</span></li>
+                            {% endfor %}
+                        </ul>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'post-create' %}">➕ Nuevo Post</a></li>
+                        <li class="nav-item"><a href="{% url 'dashboard' %}" class="nav-link">📊 Panel</a></li>
+                    {% endif %}
+                    {% if user.is_authenticated %}
+
+
+                    <li class="nav-item"><a href="{% url 'profile_edit' %}" class="nav-link"><strong>Hola, {{ user.username }} 👋</strong></a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">🚪 Salir</a></li>
+                {% else %}
+                    <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">🔑 Iniciar sesión</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">📝 Registro</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
 <div class="container mt-4">
 
   <!-- Banner principal (Hero) -->
@@ -83,7 +169,59 @@
   </div>
 
 </div>
+<!-- Footer -->
+<footer class="footer-dark mt-5">
+    <div class="container py-5">
+        <div class="row">
 
+            <!-- Columna 1: Logo y descripción -->
+            <div class="col-md-4 mb-4">
+                <h5 class="footer-title mb-2 text-light">Blog Esencial TIC</h5>
+                <p class="footer-text small">
+                    Noticias, tutoriales y recursos sobre tecnología, seguridad y desarrollo web.
+                </p>
+                <div class="d-flex gap-2 mt-3">
+                    <a href="https://instagram.com/esencialtic" class="social-btn" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                    <a href="https://facebook.com/esencialtic" class="social-btn" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+                    <a href="https://twitter.com/esencialtic" class="social-btn" aria-label="X (Twitter)"><i class="bi bi-twitter-x"></i></a>
+                </div>
+            </div>
+
+            <!-- Columna 2: Categorías -->
+            <div class="col-md-4 mb-4">
+                <h6 class="footer-subtitle mb-3">Categorías</h6>
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="/blog/categoria/soporte" class="chip-link">Soporte</a>
+                    <a href="/blog/categoria/redes" class="chip-link">Redes</a>
+                    <a href="/blog/categoria/seguridad" class="chip-link">Seguridad</a>
+                    <a href="/blog/categoria/desarrollo" class="chip-link">Desarrollo</a>
+                </div>
+            </div>
+
+            <!-- Columna 3: Enlaces rápidos -->
+            <div class="col-md-4 mb-4">
+                <h6 class="footer-subtitle mb-3">Enlaces rápidos</h6>
+                <ul class="list-unstyled">
+                    <li><a href="{% url 'post-list' %}" class="footer-link">Inicio</a></li>
+                    <li><a href="{% url 'dashboard' %}" class="footer-link">Mi Panel</a></li>
+                    <li><a href="{% url 'login' %}" class="footer-link">Iniciar sesión</a></li>
+                    <li><a href="{% url 'register' %}" class="footer-link">Registrarse</a></li>
+                </ul>
+            </div>
+
+        </div>
+
+        <!-- Línea inferior -->
+        <hr class="footer-divider">
+        <div class="text-center small text-secondary-400">
+            &copy; 2025 - Blog Esencial TIC | Todos los derechos reservados
+        </div>
+    </div>
+</footer>
+
+
+    <!-- Bootstrap JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <!-- Script para cargar últimos posts -->
 <script>
 document.addEventListener("DOMContentLoaded", () => {
@@ -110,13 +248,5 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 });
 </script>
-
-<style>
-/* Hover effect en cards */
-.hover-card:hover {
-    transform: translateY(-5px);
-    transition: 0.3s ease-in-out;
-    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15) !important;
-}
-</style>
-{% endblock %}
+</body>
+</html>
