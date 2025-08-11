@@ -1,5 +1,17 @@
-{# templates/400.html #}
-{% extends "error_base.html" %}
-{% block title %}Solicitud inválida{% endblock %}
-{% block code %}400{% endblock %}
-{% block message %}La solicitud enviada no es válida.{% endblock %}
+<!-- templates/400.html -->
+{% load static %}
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Solicitud incorrecta</title>
+  <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+</head>
+<body>
+  <main style="max-width:720px;margin:4rem auto;text-align:center">
+    <h1>😕 400 — Solicitud incorrecta</h1>
+    <p>El enlace puede estar roto o haber cambiado.</p>
+    <p><a href="/" style="text-decoration:underline">Volver al inicio</a></p>
+  </main>
+</body>
+</html>

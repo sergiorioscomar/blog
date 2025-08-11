@@ -137,4 +137,4 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 # Dev
 SITE_URL = "http://localhost:8000"
 # Prod (ejemplo)
-# SITE_URL = "https://tu-dominio.com"
+# SITE_URL = "http://esencialtic.com.ar:8000

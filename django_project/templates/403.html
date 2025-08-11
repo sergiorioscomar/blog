@@ -1,5 +1,17 @@
-{# templates/403.html #}
-{% extends "error_base.html" %}
-{% block title %}Acceso denegado{% endblock %}
-{% block code %}403{% endblock %}
-{% block message %}No tenés permisos para ver este contenido.{% endblock %}
+<!-- templates/403.html -->
+{% load static %}
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Acceso denegado</title>
+  <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+</head>
+<body>
+  <main style="max-width:720px;margin:4rem auto;text-align:center">
+    <h1>😕 403 — Acceso denegado</h1>
+    <p>No tienes permiso para acceder a esta página.</p>
+    <p><a href="/" style="text-decoration:underline">Volver al inicio</a></p>
+  </main>
+</body>
+</html>

@@ -1,5 +1,17 @@
-{# templates/500.html #}
-{% extends "error_base.html" %}
-{% block title %}Error del servidor{% endblock %}
-{% block code %}500{% endblock %}
-{% block message %}Tuvimos un problema. Estamos trabajando para solucionarlo.{% endblock %}
+<!-- templates/500.html -->
+{% load static %}
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Error interno del servidor</title>
+  <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+</head>
+<body>
+  <main style="max-width:720px;margin:4rem auto;text-align:center">
+    <h1>😕 500 — Error interno del servidor</h1>
+    <p>Lo sentimos, ha ocurrido un error en el servidor.</p>
+    <p><a href="/" style="text-decoration:underline">Volver al inicio</a></p>
+  </main>
+</body>
+</html>
