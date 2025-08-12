@@ -37,150 +37,152 @@
 <div class="container my-5">
 
   {# ======= Destacado ======= #}
-{% if featured or latest %}
-<h3 class="text-center mb-4">Últimas noticias</h3>
+  <div class="pb-5">
+    {% if featured or latest %}
+    <h3 class="text-center mb-4">Últimas noticias</h3>
 
-<div id="featuredCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="2000">
-  <div class="carousel-inner">
+    <div id="featuredCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="2000">
+      <div class="carousel-inner">
 
-    {% if featured %}
-    <div class="carousel-item active">
-      <div class="row align-items-center g-4">
-        <div class="col-md-5">
-          <a href="{% url 'post-detail' featured.id %}">
-            {% if featured.imagen %}
-              <img src="{{ featured.imagen.url }}" class="img-fluid rounded-4 shadow-sm" alt="{{ featured.titulo }}">
-            {% else %}
-              <img src="{% static 'img/default-post.jpg' %}" class="img-fluid rounded-4 shadow-sm" alt="{{ featured.titulo }}">
-            {% endif %}
-          </a>
-        </div>
-        <div class="col-md-7">
-          <h4 class="mb-2">
-            <a class="text-decoration-none" href="{% url 'post-detail' featured.id %}">{{ featured.titulo }}</a>
-          </h4>
-          <p class="text-muted">{{ featured.contenido|striptags|truncatechars:220 }}</p>
-          <div class="small text-muted">
-            Por <a href="{% url 'public_profile' username=featured.autor.username %}">{{ featured.autor.username }}</a>
-            · {{ featured.fecha_creacion|date:"d/m/Y" }}
-          </div>
-        </div>
-      </div>
-    </div>
-    {% endif %}
-
-    {% for p in latest %}
-    <div class="carousel-item">
-      <div class="row align-items-center g-4">
-        <div class="col-md-5">
-          <a href="{% url 'post-detail' p.id %}">
-            {% if p.imagen %}
-              <img src="{{ p.imagen.url }}" class="img-fluid rounded-4 shadow-sm" alt="{{ p.titulo }}">
-            {% else %}
-              <img src="{% static 'img/default-post.jpg' %}" class="img-fluid rounded-4 shadow-sm" alt="{{ p.titulo }}">
-            {% endif %}
-          </a>
-        </div>
-        <div class="col-md-7">
-          <h4 class="mb-2">
-            <a class="text-decoration-none" href="{% url 'post-detail' p.id %}">{{ p.titulo }}</a>
-          </h4>
-          <p class="text-muted">{{ p.contenido|striptags|truncatechars:220 }}</p>
-          <div class="small text-muted">
-            Por <a href="{% url 'public_profile' username=p.autor.username %}">{{ p.autor.username }}</a>
-            · {{ p.fecha_creacion|date:"d/m/Y" }}
-          </div>
-        </div>
-      </div>
-    </div>
-    {% endfor %}
-
-  </div>
-
-  <!-- Controles opcionales -->
-  <button class="carousel-control-prev" type="button" data-bs-target="#featuredCarousel" data-bs-slide="prev">
-    <span class="carousel-control-prev-icon"></span>
-  </button>
-  <button class="carousel-control-next" type="button" data-bs-target="#featuredCarousel" data-bs-slide="next">
-    <span class="carousel-control-next-icon"></span>
-  </button>
-
-</div>
-{% endif %}
-
-  {# ======= Lo más visto ======= #}
-  {% if most_viewed %}
-    <h4 class="text-center mb-3">Lo más visto</h4>
-    <div class="row g-4 mb-5">
-      {% for p in most_viewed %}
-        <div class="col-md-4">
-          <div class="card border-0 shadow-sm rounded-4 h-100">
-            <a href="{% url 'post-detail' p.id %}">
-              {% if p.imagen %}
-                <img src="{{ p.imagen.url }}" class="card-img-top rounded-top-4" alt="{{ p.titulo }}">
-              {% else %}
-                <img src="{% static 'img/default-post.jpg' %}" class="card-img-top rounded-top-4" alt="{{ p.titulo }}">
-              {% endif %}
-            </a>
-            <div class="card-body">
-              <h6 class="card-title">
-                <a href="{% url 'post-detail' p.id %}" class="stretched-link text-decoration-none">{{ p.titulo }}</a>
-              </h6>
-              <p class="card-text small text-muted">{{ p.contenido|striptags|truncatechars:140 }}</p>
-              <div class="d-flex align-items-center gap-2 small text-muted">
-                {% if p.autor.profile.avatar %}
-                  <img src="{{ p.autor.profile.avatar.url }}" class="rounded-circle" width="20" height="20" alt="">
+        {% if featured %}
+        <div class="carousel-item active">
+          <div class="row align-items-center g-4">
+            <div class="col-md-5">
+              <a href="{% url 'post-detail' featured.id %}">
+                {% if featured.imagen %}
+                  <img src="{{ featured.imagen.url }}" class="img-fluid rounded-4 shadow-sm" alt="{{ featured.titulo }}">
                 {% else %}
-                  <img src="{% static 'img/avatar-default.png' %}" class="rounded-circle" width="20" height="20" alt="">
+                  <img src="{% static 'img/default-post.jpg' %}" class="img-fluid rounded-4 shadow-sm" alt="{{ featured.titulo }}">
                 {% endif %}
-                <a href="{% url 'public_profile' username=p.autor.username %}">
-                  {{ p.autor.username }}
-                </a>
+              </a>
+            </div>
+            <div class="col-md-7">
+              <h4 class="mb-2">
+                <a class="text-decoration-none" href="{% url 'post-detail' featured.id %}">{{ featured.titulo }}</a>
+              </h4>
+              <p class="text-muted">{{ featured.contenido|striptags|truncatechars:220 }}</p>
+              <div class="small text-muted">
+                Por <a href="{% url 'public_profile' username=featured.autor.username %}">{{ featured.autor.username }}</a>
+                · {{ featured.fecha_creacion|date:"d/m/Y" }}
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+
+        {% for p in latest %}
+        <div class="carousel-item">
+          <div class="row align-items-center g-4">
+            <div class="col-md-5">
+              <a href="{% url 'post-detail' p.id %}">
+                {% if p.imagen %}
+                  <img src="{{ p.imagen.url }}" class="img-fluid rounded-4 shadow-sm" alt="{{ p.titulo }}">
+                {% else %}
+                  <img src="{% static 'img/default-post.jpg' %}" class="img-fluid rounded-4 shadow-sm" alt="{{ p.titulo }}">
+                {% endif %}
+              </a>
+            </div>
+            <div class="col-md-7">
+              <h4 class="mb-2">
+                <a class="text-decoration-none" href="{% url 'post-detail' p.id %}">{{ p.titulo }}</a>
+              </h4>
+              <p class="text-muted">{{ p.contenido|striptags|truncatechars:220 }}</p>
+              <div class="small text-muted">
+                Por <a href="{% url 'public_profile' username=p.autor.username %}">{{ p.autor.username }}</a>
                 · {{ p.fecha_creacion|date:"d/m/Y" }}
               </div>
             </div>
           </div>
         </div>
-      {% endfor %}
+        {% endfor %}
+
+      </div>
+
+      <!-- Controles opcionales -->
+      <button class="carousel-control-prev" type="button" data-bs-target="#featuredCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#featuredCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+      </button>
+
     </div>
-  {% endif %}
 
-  {# ======= Listado general (tu loop), evitando repetir el destacado en la página 1 ======= #}
-  <h5 class="mb-3">Todos los posts</h5>
+    {% endif %}
+  </div>
 
+  {# ======= Lo más visto ======= #}
+  <div class="pb-3">
+    {% if most_viewed %}
+      <h4 class="text-center mb-3">Lo más visto</h4>
+      <div class="row g-4 mb-5">
+        {% for p in most_viewed %}
+          <div class="col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <a href="{% url 'post-detail' p.id %}">
+                {% if p.imagen %}
+                  <img src="{{ p.imagen.url }}" class="card-img-top rounded-top-4" alt="{{ p.titulo }}">
+                {% else %}
+                  <img src="{% static 'img/default-post.jpg' %}" class="card-img-top rounded-top-4" alt="{{ p.titulo }}">
+                {% endif %}
+              </a>
+              <div class="card-body">
+                <h6 class="card-title">
+                  <a href="{% url 'post-detail' p.id %}" class="stretched-link text-decoration-none">{{ p.titulo }}</a>
+                </h6>
+                <p class="card-text small text-muted">{{ p.contenido|striptags|truncatechars:140 }}</p>
+                <div class="d-flex align-items-center gap-2 small text-muted">
+                  {% if p.autor.profile.avatar %}
+                    <img src="{{ p.autor.profile.avatar.url }}" class="rounded-circle" width="20" height="20" alt="">
+                  {% else %}
+                    <img src="{% static 'img/avatar-default.png' %}" class="rounded-circle" width="20" height="20" alt="">
+                  {% endif %}
+                  <a href="{% url 'public_profile' username=p.autor.username %}">
+                    {{ p.autor.username }}
+                  </a>
+                  · {{ p.fecha_creacion|date:"d/m/Y" }}
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+  {# ======= Listado general, evitando repetir el destacado en la página 1 ======= #}
+  <h5 class="text-center mb-3">Todas las publicaciones</h5>
+  <div class="row g-4 mb-5">
   {% for post in posts %}
     {% if not featured or page_obj.number != 1 or post.id != featured.id %}
-      <div class="card mb-3 shadow-sm border-0 post-card">
-        <div class="row g-0">
-          <div class="col-md-3 post-img-container">
-            {% if post.imagen %}
-              <img src="{{ post.imagen.url }}" class="img-fluid h-100 w-100" alt="{{ post.titulo }}" style="height:150px; object-fit: cover;">
-            {% else %}
-              <img src="{% static 'img/default-post.jpg' %}" class="img-fluid h-100 w-100" alt="Imagen por defecto" style="height:150px; object-fit: cover;">
-            {% endif %}
-          </div>
-          <div class="col-md-9">
-            <div class="card-body">
-              <h5 class="card-title">{{ post.titulo }}</h5>
-              <p class="card-text text-muted mb-2">
-                Publicado el {{ post.fecha_creacion|date:"d/m/Y" }}
-                por
-                <a href="{% url 'public_profile' username=post.autor.username %}">
-                  <strong>{{ post.autor.username }}</strong>
-                </a>
-              </p>
-              <p class="card-text">{{ post.contenido|truncatechars:150 }}</p>
-              <a href="{% url 'post-detail' post.id %}" class="btn btn-primary btn-sm">Ver más</a>
-            </div>
+      <div class="col-md-4 col-sm-6">
+        <div class="card h-100 shadow-sm border-0 post-card">
+          {% if post.imagen %}
+            <img src="{{ post.imagen.url }}" class="card-img-top" alt="{{ post.titulo }}" style="height:200px; object-fit: cover;">
+          {% else %}
+            <img src="{% static 'img/default-post.jpg' %}" class="card-img-top" alt="Imagen por defecto" style="height:200px; object-fit: cover;">
+          {% endif %}
+          <div class="card-body">
+            <h5 class="card-title">{{ post.titulo }}</h5>
+            <p class="card-text text-muted mb-2">
+              Publicado el {{ post.fecha_creacion|date:"d/m/Y" }}
+              por
+              <a href="{% url 'public_profile' username=post.autor.username %}">
+                <strong>{{ post.autor.username }}</strong>
+              </a>
+            </p>
+            <p class="card-text">{{ post.contenido|truncatechars:150 }}</p>
+            <a href="{% url 'post-detail' post.id %}" class="btn btn-primary btn-sm">Ver más</a>
           </div>
         </div>
       </div>
     {% endif %}
   {% empty %}
-    <p class="text-center mt-5 text-muted">😢 No se encontraron resultados.</p>
+    <div class="col-12">
+      <p class="text-center mt-5 text-muted">😢 No se encontraron resultados.</p>
+    </div>
   {% endfor %}
-
-  {# ======= Paginación (la tuya) ======= #}
+  </div>
+  {# ======= Paginación ======= #}
   {% if is_paginated %}
     <nav>
       <ul class="pagination justify-content-center">

@@ -1,17 +1,15 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% load static %}
+{% load blog_extras %}
 
 {% block content %}
 <div class="container" style="min-height: 85vh;">
   <div class="row align-items-center">
-
     <!-- Columna de la imagen -->
-    <div class="col-md-6 d-none d-md-block p-0">
-      <div class="bg-image"><img src="{% static 'img/default-post.jpg' %}" 
-           alt="Iniciar sesión"
-           class="img-fluid h-100 w-100"
-           style="object-fit: cover;"></div>
-      
+    <div class="col-md-6 d-none d-md-block p-5">
+      <div class="bg-image">
+        <img src="{% static 'img/login.png' %}" alt="Iniciar sesión" class="bg-imagen h-100 w-100 img-fluid" style="object-fit: cover;">
+      </div>
     </div>
 
     <!-- Columna del formulario -->

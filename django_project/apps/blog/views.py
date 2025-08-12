@@ -1,3 +1,4 @@
+from urllib import request
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
 from django.urls import reverse_lazy
@@ -14,7 +15,6 @@ from django.conf import settings
 from .forms import CreatePostForm, UpdatePostForm, ComentarioForm, MensajeForm
 from django.http import HttpResponseForbidden
 from django.core.paginator import Paginator
-
 
 #likes
 @login_required
@@ -33,13 +33,13 @@ class PostListView(ListView):
     model = Post
     template_name = "post_list.html"
     context_object_name = "posts"
-    paginate_by = 9
+    paginate_by = 3
     ordering = ["-fecha_creacion"]
 
     def get_queryset(self):
         qs = (
             Post.objects
-            .select_related("categoria", "autor")   # si categoria es M2M, usa prefetch_related("categoria")
+            .select_related("categoria", "autor")
             .order_by("-fecha_creacion")
         )
 
@@ -74,7 +74,7 @@ class PostListView(ListView):
         ctx["categoria_actual"] = self.kwargs.get("slug") or self.request.GET.get("categoria")
         ctx["q"] = self.request.GET.get("q", "")
 
-        # === NUEVO: armado para home tipo "destacado + lo más visto" ===
+        # armado para home tipo "destacado + lo más visto"
         qs = self.object_list  # ya viene filtrado/ordenado por fecha desc
 
         featured = qs.first()
@@ -167,6 +167,7 @@ class ComentarioCreateView(CreateView):
                 usuario=post_autor,
                 mensaje=f"{self.request.user.username} comentó tu post '{form.instance.post.titulo}'"
             )
+            
         # Enviar mail al autor del post
             autor_email = post_autor.email
             if autor_email:
@@ -229,6 +230,7 @@ class ComentarioUpdateView(UpdateView):
         comentario = self.get_object()
         user = self.request.user
         return user.is_superuser or user == comentario.autor
+        
 class ComentarioDeleteView(DeleteView):
     model = Comentario
     template_name = "comentario-eliminar.html"
@@ -248,7 +250,6 @@ class PostUpdateView(LoginRequiredMixin, OwnerOrPermMixin, UserPassesTestMixin, 
     template_name = "post_update_form.html"
     success_url = reverse_lazy("post-list")
     required_perm = "blog.change_post" 
-
 
 # PÁGINA DE INICIO
 def index(request):

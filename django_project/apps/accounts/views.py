@@ -74,9 +74,10 @@ class ProfileUpdateView(LoginRequiredMixin, View):
 
 class PublicProfileView(DetailView):
     model = User
-    template_name = "accounts/public_profile.html"
+    template_name = "public_profile.html"
     slug_field = "username"
     slug_url_kwarg = "username"
+    context_object_name = "profile_user"
 
     def get_queryset(self):
         # Trae el profile de una (avatar, urls, etc.)

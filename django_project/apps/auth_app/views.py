@@ -10,9 +10,6 @@ from django.contrib.sites.shortcuts import get_current_site
 from .forms import CustomAuthenticationForm
 from django.contrib.auth.views import LoginView
 
-
-# Create your views here.
-
 # username / email y password
 
 def exit(request):
@@ -53,6 +50,6 @@ class RegisterView(CreateView):
         return response
 
 class CustomLoginView(LoginView):
-    template_name = "accounts/login.html"
+    template_name = "registration/login.html"
     authentication_form = CustomAuthenticationForm
     redirect_authenticated_user = True

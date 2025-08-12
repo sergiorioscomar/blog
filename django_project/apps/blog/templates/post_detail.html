@@ -58,7 +58,7 @@
                                 <img src="{% static 'img/default-post.jpg' %}" 
                                      class="img-fluid w-100" style="height:180px; object-fit: cover;">
                             {% endif %}
-                            <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-50 text-white fw-bold fs-6 text-center px-2">
+                            <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-50 text-white fw-bold fs-4 text-center px-2">
                                 ⬅️ {{ posts.get_previous_by_fecha_creacion.titulo|truncatechars:40 }}
                             </div>
                         </a>
@@ -76,7 +76,7 @@
                                 <img src="{% static 'img/default-post.jpg' %}" 
                                      class="img-fluid w-100" style="height:180px; object-fit: cover;">
                             {% endif %}
-                            <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-50 text-white fw-bold fs-6 text-center px-2">
+                            <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-50 text-white fw-bold fs-4 text-center px-2">
                                 {{ posts.get_next_by_fecha_creacion.titulo|truncatechars:40 }} ➡️
                             </div>
                         </a>
