@@ -1,11 +1,15 @@
 
 from django.urls import path
-from .views import exit, RegisterView
+
+from .views import exit, RegisterView, CustomLoginView
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('logout/', exit, name='logout'),
+
     path('register/', RegisterView.as_view(), name='register'),
+    # Login
+    path("accounts/login/", CustomLoginView.as_view(), name="login"),
 
     # formulario para enviar email
     path('forgot-password/', auth_views.PasswordResetView.as_view(

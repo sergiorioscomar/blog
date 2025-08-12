@@ -23,6 +23,13 @@ from django.conf.urls.static import static
 
 
 urlpatterns = [
+    # urls de auth_app
+    path('accounts/', include('django.contrib.auth.urls')),
+    path('', include('apps.auth_app.urls')),
+    # urls de accounts
+    path('accounts/', include('apps.accounts.urls')),
+
+    #admin
     path('admin/', admin.site.urls),
     path('', views.inicio),
     # Urls de app blog
@@ -30,12 +37,4 @@ urlpatterns = [
 
     # Urls de app api
     path('api/', include('apps.api.urls')),
-
-    # urls de auth_app
-    path('accounts/', include('django.contrib.auth.urls')),
-    path('', include('apps.auth_app.urls')),
-    # urls de accounts
-    path('accounts/', include('apps.accounts.urls')),
-    # path("accounts/", include("apps.accounts.urls", namespace="accounts")),
-
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
