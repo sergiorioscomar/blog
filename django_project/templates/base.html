@@ -23,7 +23,7 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark py-1">
     <div class="container-fluid">
         <ul class="navbar-nav me-auto mb-0">
-            <li class="nav-item"><a class="nav-link" href="/blog/?q=&categoria=1"></a></li>
+            <li class="nav-item"><a class="nav-link" href="/blog/categoria/Soporte"></a></li>
         </ul>
         <!-- Buscador -->
         <form class="d-flex" action="/blog/?q=" method="get">
@@ -78,8 +78,6 @@
                         <li class="nav-item"><a href="{% url 'dashboard' %}" class="nav-link">📊 Panel</a></li>
                     {% endif %}
                     {% if user.is_authenticated %}
-
-
                     <li class="nav-item"><a href="{% url 'profile_edit' %}" class="nav-link"><strong>Hola, {{ user.username }} 👋</strong></a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">🚪 Salir</a></li>
                 {% else %}
@@ -119,12 +117,6 @@
             <div class="col-md-4 mb-4">
                 <h6 class="footer-subtitle mb-3">Categorías</h6>
                 <div class="d-flex flex-wrap gap-2">
-                    <!-- Dinamico
-                    for cat in categorias %}
-                        <a href="/blog/categoria/{{ cat.slug }}" class="chip-link">{{ cat.nombre }}</a>
-                    {% empty %}
-                        <span class="text-muted small">Sin categorías aún</span>
-                    {% endfor %} -->
                     <a href="/blog/categoria/soporte" class="chip-link">Soporte</a>
                     <a href="/blog/categoria/redes" class="chip-link">Redes</a>
                     <a href="/blog/categoria/seguridad" class="chip-link">Seguridad</a>
