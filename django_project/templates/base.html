@@ -119,11 +119,17 @@
             <div class="col-md-4 mb-4">
                 <h6 class="footer-subtitle mb-3">Categorías</h6>
                 <div class="d-flex flex-wrap gap-2">
-                    {% for cat in categorias %}
+                    <!-- Dinamico
+                    for cat in categorias %}
                         <a href="/blog/categoria/{{ cat.slug }}" class="chip-link">{{ cat.nombre }}</a>
                     {% empty %}
                         <span class="text-muted small">Sin categorías aún</span>
-                    {% endfor %}
+                    {% endfor %} -->
+                    <a href="/blog/categoria/soporte" class="chip-link">Soporte</a>
+                    <a href="/blog/categoria/redes" class="chip-link">Redes</a>
+                    <a href="/blog/categoria/seguridad" class="chip-link">Seguridad</a>
+                    <a href="/blog/categoria/desarrollo" class="chip-link">Desarrollo</a>
+                </div>
                 </div>
             </div>
 
