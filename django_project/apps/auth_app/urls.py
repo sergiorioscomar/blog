@@ -5,6 +5,7 @@ from .views import exit, RegisterView, CustomLoginView
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
+    
     path('logout/', exit, name='logout'),
 
     path('register/', RegisterView.as_view(), name='register'),

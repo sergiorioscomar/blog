@@ -34,7 +34,9 @@ urlpatterns = [
     path('', views.inicio),
     # Urls de app blog
     path('blog/', include('apps.blog.urls')),
-
+    # Urls de app user
     # Urls de app api
     path('api/', include('apps.api.urls')),
+    # summernote
+    path('summernote/', include('django_summernote.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

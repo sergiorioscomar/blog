@@ -31,7 +31,7 @@ def like_post(request, pk):
 # LISTA DE POSTS CON BÚSQUEDA Y FILTRO
 class PostListView(ListView):
     model = Post
-    template_name = "post_list.html"
+    template_name = "posts/post_list.html"
     context_object_name = "posts"
     paginate_by = 3
     ordering = ["-fecha_creacion"]
@@ -98,7 +98,7 @@ class PostListView(ListView):
 # DETALLE DE POST + FORMULARIO DE COMENTARIOS
 class PostDetailView(DetailView):
     model = Post
-    template_name = "post_detail.html"
+    template_name = "posts/post_detail.html"
     context_object_name = "posts"
 
     def get_object(self, queryset=None):
@@ -128,7 +128,7 @@ class PostDetailView(DetailView):
 # ELIMINAR POST (VBC)
 class PostDeleteView(LoginRequiredMixin, OwnerOrPermMixin, UserPassesTestMixin, DeleteView):
     model = Post
-    template_name = "post_confirm_delete.html"
+    template_name = "posts/post_confirm_delete.html"
     success_url = reverse_lazy("post-list")
     required_perm = "blog.delete_post"
     
@@ -145,14 +145,14 @@ def post_delete(request, pk):
     if request.method == "POST":
         post.delete()
         return redirect("post-list")
-    return render(request, "post_confirm_delete.html", {"post": post})
+    return render(request, "posts/post_confirm_delete.html", {"post": post})
 
 
 # CREAR COMENTARIO
 class ComentarioCreateView(CreateView):
     model = Comentario
     fields = ['contenido']
-    template_name = 'blog/post_detail.html'
+    template_name = 'posts/post_detail.html'
 
     def form_valid(self, form):
         form.instance.autor = self.request.user
@@ -209,7 +209,7 @@ class ComentarioCreateView(CreateView):
 class PostCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     model = Post
     form_class = CreatePostForm
-    template_name = "post_form.html"
+    template_name = "posts/post_form.html"
     success_url = reverse_lazy("post-list")
     permission_required = "blog.add_post"
 
@@ -221,7 +221,7 @@ class PostCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
 class ComentarioUpdateView(UpdateView):
     model = Comentario
     form_class = ComentarioForm
-    template_name = "comentario-editar.html"
+    template_name = "posts/comentario-editar.html"
 
     def get_success_url(self):
         return reverse_lazy('post-detail', kwargs={'pk': self.object.post.pk})
@@ -233,7 +233,7 @@ class ComentarioUpdateView(UpdateView):
         
 class ComentarioDeleteView(DeleteView):
     model = Comentario
-    template_name = "comentario-eliminar.html"
+    template_name = "posts/comentario-eliminar.html"
 
     def get_success_url(self):
         return reverse_lazy('post-detail', kwargs={'pk': self.object.post.pk})
@@ -247,7 +247,7 @@ class ComentarioDeleteView(DeleteView):
 class PostUpdateView(LoginRequiredMixin, OwnerOrPermMixin, UserPassesTestMixin, UpdateView):
     model = Post
     form_class = UpdatePostForm
-    template_name = "post_update_form.html"
+    template_name = "posts/post_update_form.html"
     success_url = reverse_lazy("post-list")
     required_perm = "blog.change_post" 
 
@@ -277,7 +277,7 @@ def enviar_mensaje(request):
     else:
         form = MensajeForm(user=request.user, initial=initial)
 
-    return render(request, "mensajes/enviar_mensaje.html", {"form": form})
+    return render(request, "emails/enviar_mensaje.html", {"form": form})
 
 @login_required
 def bandeja_entrada(request):
@@ -319,7 +319,7 @@ def bandeja_entrada(request):
     paginator = Paginator(qs, 10)
     page_obj = paginator.get_page(request.GET.get("page"))
 
-    return render(request, "mensajes/bandeja_entrada.html", {
+    return render(request, "emails/bandeja_entrada.html", {
         "tab": tab,
         "tab_label": {"historial": "Historial", "recibidos": "Recibidos", "enviados": "Enviados"}[tab],
         "page_obj": page_obj,
@@ -339,4 +339,4 @@ def detalle_mensaje(request, pk):
         m.leido = True
         m.save(update_fields=["leido"])
 
-    return render(request, "mensajes/detalle_mensaje.html", {"mensaje": m})
+    return render(request, "emails/detalle_mensaje.html", {"mensaje": m})
