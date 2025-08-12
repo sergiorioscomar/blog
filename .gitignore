@@ -32,3 +32,4 @@ postgres_data/
 # Ignorar configuración local de Django
 django_project/config/settings/local.py
 django_project/config/settings/production.py
+django_project/config/settings/base.py
