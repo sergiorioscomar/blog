@@ -9,5 +9,10 @@ class Profile(models.Model):
     website = models.URLField(blank=True)
     github = models.URLField(blank=True)
 
+    def get_avatar_url(self):
+        if self.avatar and hasattr(self.avatar, 'url'):
+            return self.avatar.url
+        return "/static/img/avatar-default.png"
+
     def __str__(self):
         return f"Perfil de {self.user.username}"

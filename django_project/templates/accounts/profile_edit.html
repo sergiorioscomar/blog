@@ -3,36 +3,103 @@
 {% block title %}Editar perfil{% endblock %}
 
 {% block content %}
-<div class="container py-4" style="max-width: 760px;">
-  <h2 class="mb-3">Editar perfil</h2>
-  <form method="post" enctype="multipart/form-data" class="card shadow-sm">
+<style>
+  /* Oculta el texto feo del ClearableFileInput de Django */
+  .clearable-file-input a,
+  .clearable-file-input label[for="id_avatar-clear"] {
+    display: none !important;
+  }
+</style>
+
+<div class="container py-4" style="max-width: 920px;">
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <div>
+      <h2 class="mb-0">Editar perfil</h2>
+      <small class="text-muted">Actualiza tu información y tu avatar</small>
+    </div>
+  </div>
+
+  <form method="post" enctype="multipart/form-data" class="card shadow-sm border-0 rounded-3">
     {% csrf_token %}
+
     <div class="card-body">
-      <div class="row g-3">
-        <div class="col-md-4 text-center">
-          {% if request.user.profile.avatar %}
-            <img src="{{ request.user.profile.avatar.url }}" class="img-fluid rounded mb-2" style="max-height:140px" alt="avatar">
-          {% else %}
-            <div class="bg-light rounded d-flex align-items-center justify-content-center mb-2" style="height:140px;">Sin avatar</div>
-          {% endif %}
-          {{ pform.avatar }}
+      <div class="row g-4">
+        <!-- Columna Avatar -->
+        <div class="col-md-4">
+          <div class="text-center">
+            <div class="position-relative d-inline-block">
+              {% if request.user.profile.avatar %}
+                <img id="avatarPreview"
+                     src="{{ request.user.profile.avatar.url }}"
+                     class="rounded-circle shadow-sm"
+                     style="width: 160px; height:160px; object-fit: cover;"
+                     alt="Avatar">
+              {% else %}
+                <img id="avatarPreview"
+                     src="{% static 'img/avatar-default.png' %}"
+                     class="rounded-circle shadow-sm"
+                     style="width: 160px; height:160px; object-fit: cover;"
+                     alt="Avatar">
+              {% endif %}
+              <!-- Botón flotante para cambiar -->
+              <label for="id_avatar"
+                     class="btn btn-sm btn-dark position-absolute bottom-0 end-0 translate-middle-y rounded-pill px-3">
+                Cambiar
+              </label>
+            </div>
+
+            <!-- Input de archivo (oculto visualmente, pero accesible) -->
+            <div class="mt-3">
+              {{ pform.avatar.as_widget|safe }}
+              <div class="form-text">PNG/JPG, máx. 2&nbsp;MB</div>
+            </div>
+
+            <!-- “Quitar avatar”: replica el checkbox que renderiza Django -->
+            <div class="form-check form-switch mt-2">
+              <input class="form-check-input" type="checkbox" id="clearAvatarSwitch" name="avatar-clear">
+              <label class="form-check-label" for="clearAvatarSwitch">Quitar avatar</label>
+            </div>
+          </div>
         </div>
+
+        <!-- Columna Datos -->
         <div class="col-md-8">
           <div class="row g-3">
-            <div class="col-md-6">{{ uform.first_name.label_tag }} {{ uform.first_name }}</div>
-            <div class="col-md-6">{{ uform.last_name.label_tag }} {{ uform.last_name }}</div>
-            <div class="col-md-12">{{ uform.email.label_tag }} {{ uform.email }}</div>
-            <div class="col-md-12">{{ pform.bio.label_tag }} {{ pform.bio }}</div>
-            <div class="col-md-6">{{ pform.website.label_tag }} {{ pform.website }}</div>
-            <div class="col-md-6">{{ pform.github.label_tag }} {{ pform.github }}</div>
+            <div class="col-md-6">
+              <label class="form-label">{{ uform.first_name.label }}</label>
+              {{ uform.first_name }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">{{ uform.last_name.label }}</label>
+              {{ uform.last_name }}
+            </div>
+            <div class="col-md-12">
+              <label class="form-label">{{ uform.email.label }}</label>
+              {{ uform.email }}
+            </div>
+            <div class="col-md-12">
+              <label class="form-label">{{ pform.bio.label }}</label>
+              {{ pform.bio }}
+              <div class="form-text">Una breve descripción sobre ti.</div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">{{ pform.website.label }}</label>
+              {{ pform.website }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">{{ pform.github.label }}</label>
+              {{ pform.github }}
+            </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="card-footer text-end">
-      <a class="btn btn-light" href="{% url 'dashboard' %}">Cancelar</a>
+
+    <div class="card-footer d-flex justify-content-between align-items-center bg-white">
+      <a class="btn btn-outline-secondary" href="{% url 'dashboard' %}">Cancelar</a>
       <button class="btn btn-primary" type="submit">Guardar cambios</button>
     </div>
   </form>
 </div>
+
 {% endblock %}
