@@ -10,5 +10,4 @@ def add_class(field, css_class):
 
 @register.filter
 def is_summernote(field):
-    # devuelve True si el campo es un widget summernote
     return isinstance(field.field.widget, (SummernoteWidget, SummernoteInplaceWidget, SimpleSummernoteWidget))

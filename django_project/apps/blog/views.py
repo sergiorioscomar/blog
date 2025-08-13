@@ -1,7 +1,8 @@
 from urllib import request
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
-from django.urls import reverse_lazy
+from django.db import transaction
+from django.urls import reverse_lazy, reverse, NoReverseMatch
 from django.forms import modelform_factory
 from django.views.generic import ListView, DetailView, DeleteView, CreateView, UpdateView
 from django.utils.text import slugify
@@ -28,7 +29,7 @@ def like_post(request, pk):
         post.likes.remove(request.user)
     else:
         post.likes.add(request.user)
-    return redirect('post-detail', pk=pk)
+    return redirect(reverse('post-detail', kwargs={'pk': pk}) + '#likes')
 
 # ----------- Vistas Basadas en Clases --------------------------------
 
@@ -228,6 +229,7 @@ class ComentarioCreateView(CreateView):
 
     def get_success_url(self):
         return reverse_lazy('post-detail', kwargs={'pk': self.kwargs['pk']})
+
     
 # CREAR POST
 class PostCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
@@ -254,6 +256,23 @@ class ComentarioUpdateView(UpdateView):
         comentario = self.get_object()
         user = self.request.user
         return user.is_superuser or user == comentario.autor
+    
+    def form_valid(self, form):
+        # Detectar si realmente cambió algo (evita notificaciones “vacías”)
+        hubo_cambios = form.has_changed()
+        response = super().form_valid(form)  # guarda self.object
+
+        if hubo_cambios:
+            post_autor = self.object.post.autor
+            # Solo notificar si quien edita NO es el autor del post
+            if post_autor != self.request.user:
+                Notificacion.objects.create(
+                    usuario=post_autor,
+                    mensaje=f"{self.request.user.username} editó un comentario en tu post '{self.object.post.titulo}'",
+                    # opcional: linkea al post y ancla al comentario
+                    url=reverse('post-detail', kwargs={'pk': self.object.post.pk}) + f"#comentario-{self.object.pk}"
+                )
+        return response
         
 class ComentarioDeleteView(DeleteView):
     model = Comentario
@@ -297,6 +316,14 @@ def enviar_mensaje(request):
             m = form.save(commit=False)
             m.emisor = request.user
             m.save()
+            # 🔔 Crear notificación asociada al mensaje privado
+            if m.receptor != request.user:
+                Notificacion.objects.create(
+                    usuario=m.receptor,
+                    mensaje=f"{request.user.username} te envió un mensaje privado.",
+                    mensaje_privado=m  # <-- relación directa al mensaje
+                )
+
             return redirect("bandeja_entrada")
     else:
         form = MensajeForm(user=request.user, initial=initial)
@@ -362,5 +389,8 @@ def detalle_mensaje(request, pk):
     if m.receptor_id == request.user.id and not m.leido:
         m.leido = True
         m.save(update_fields=["leido"])
+
+    if request.user.is_authenticated:
+        Notificacion.objects.filter(usuario=request.user, leido=False).update(leido=True)
 
     return render(request, "emails/detalle_mensaje.html", {"mensaje": m})

@@ -30,7 +30,7 @@ urlpatterns = [
     path('accounts/', include('apps.accounts.urls')),
 
     #admin
-    path('panel4dm1n/', admin.site.urls),
+    path('admin/', admin.site.urls),
     path('', views.inicio),
     # Urls de app blog
     path('blog/', include('apps.blog.urls')),

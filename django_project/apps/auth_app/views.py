@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 
 def exit(request):
     logout(request)
+    list(messages.get_messages(request))
     return redirect('post-list')
 
 
@@ -24,7 +25,7 @@ class RegisterView(CreateView):
     success_url = reverse_lazy("post-list")
 
     def form_valid(self, form):
-        response = super().form_valid(form)  # guarda self.object
+        response = super().form_valid(form)
         user = self.object
 
         # logueamos al usuario

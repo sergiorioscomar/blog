@@ -24,7 +24,7 @@
                 </p>
                 <hr>
                 <p class="card-text fs-5">{{ posts.contenido|linebreaks }}</p>
-                <div class="text-center mt-3">
+                <div class="text-center mt-3" id="likes">
                     {% if user.is_authenticated %}                       
                         <!-- 🔹 Botón Like -->
                         <form action="{% url 'like_post' posts.id %}" method="post" class="d-inline">
@@ -125,17 +125,18 @@
                     {% empty %}
                         <p class="text-muted">Todavía no hay comentarios. ¡Sé el primero!</p>
                     {% endfor %}
-
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
                 </div>
             </div>
 
         </div>
     </div>
 </div>
-
-<!-- Efecto hover para navegación -->
-<style>
-
-</style>
 
 {% endblock %}

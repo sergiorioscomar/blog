@@ -82,6 +82,7 @@ class Notificacion(models.Model):
     leido = models.BooleanField(default=False)
     fecha = models.DateTimeField(auto_now_add=True)
     mensaje_privado = models.ForeignKey('Mensaje', null=True, blank=True, on_delete=models.CASCADE)
+    url = models.CharField(max_length=255, blank=True, null=True)
 
 
     def __str__(self):
