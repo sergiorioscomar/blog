@@ -15,6 +15,10 @@ from django.conf import settings
 from .forms import CreatePostForm, UpdatePostForm, ComentarioForm, MensajeForm
 from django.http import HttpResponseForbidden
 from django.core.paginator import Paginator
+from django.contrib import messages
+import logging
+
+logger = logging.getLogger(__name__)
 
 #likes
 @login_required
@@ -171,34 +175,54 @@ class ComentarioCreateView(CreateView):
         # Enviar mail al autor del post
             autor_email = post_autor.email
             if autor_email:
-                send_mail(
-                    subject=f"Nuevo comentario en tu post '{form.instance.post.titulo}'",
-                    message=(
-                        f"Hola {post_autor.username},\n\n"
-                        f"{self.request.user.username} ha comentado en tu publicación '{form.instance.post.titulo}'.\n"
-                        "¡Revisa tu post para ver el comentario!\n\n"
-                        "Saludos"
-                    ),
-                    from_email=settings.DEFAULT_FROM_EMAIL,
-                    recipient_list=[autor_email],
-                    fail_silently=True,
-                )
+                try:
+                    send_mail(
+                        subject=f"Nuevo comentario en tu post '{form.instance.post.titulo}'",
+                        message=(
+                            f"Hola {post_autor.username},\n\n"
+                            f"{self.request.user.username} ha comentado en tu publicación '{form.instance.post.titulo}'.\n"
+                            "¡Revisa tu post para ver el comentario!\n\n"
+                            "Saludos"
+                        ),
+                        from_email=settings.DEFAULT_FROM_EMAIL,
+                        recipient_list=[autor_email],
+                        fail_silently=False,  # <- así capturamos el error
+                    )
+                    messages.success(self.request, "Comentario publicado y email enviado correctamente.")
+                except Exception as e:
+                    logger.exception("No se pudo enviar el email de notificación")
+                    messages.warning(
+                        self.request,
+                        "Comentario publicado, pero no se pudo enviar el email de notificación al autor."
+                    )
+            else:
+                messages.success(self.request, "Comentario publicado.")
 
         # Enviar mail al usuario que comentó (su email)
         user_email = self.request.user.email
         if user_email:
-            send_mail(
-                subject=f"Gracias por comentar en '{form.instance.post.titulo}'",
-                message=(
-                    f"Hola {self.request.user.username},\n\n"
-                    f"Gracias por tu comentario en la publicación '{form.instance.post.titulo}'.\n"
-                    "¡Te esperamos en próximas publicaciones!\n\n"
-                    "Saludos"
-                ),
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[user_email],
-                fail_silently=True,  # Para no romper en caso de error de mail
-            )
+            try:
+                send_mail(
+                    subject=f"Gracias por comentar en '{form.instance.post.titulo}'",
+                    message=(
+                        f"Hola {self.request.user.username},\n\n"
+                        f"Gracias por tu comentario en la publicación '{form.instance.post.titulo}'.\n"
+                        "¡Te esperamos en próximas publicaciones!\n\n"
+                        "Saludos"
+                    ),
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[user_email],
+                    fail_silently=False,  # Importante: que lance la excepción si falla
+                )
+                messages.success(self.request, "Comentario publicado y email de agradecimiento enviado.")
+            except Exception as e:
+                logger.exception("No se pudo enviar el email de agradecimiento")
+                messages.warning(
+                    self.request,
+                    "Comentario publicado, pero no se pudo enviar el email de agradecimiento."
+                )
+        else:
+            messages.success(self.request, "Comentario publicado.")
 
         return super().form_valid(form)
 

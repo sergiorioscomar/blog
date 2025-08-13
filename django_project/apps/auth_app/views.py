@@ -7,6 +7,9 @@ from .forms import CustomUserCreationForm
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.contrib.sites.shortcuts import get_current_site
+from django.contrib import messages
+import logging
+logger = logging.getLogger(__name__)
 
 # username / email y password
 
@@ -43,6 +46,10 @@ class RegisterView(CreateView):
                 to=[user.email],
             )
             msg.attach_alternative(html_body, "text/html")
-            msg.send(fail_silently=False)
+            try:
+                msg.send(fail_silently=False)
+            except Exception as e: #adapto esto porque pythonanywhere no permite enviar emails
+                logger.exception("Fallo envío de email de bienvenida")
+                messages.warning(self.request, "Te registraste bien, pero no pudimos enviarte el email de bienvenida.")
 
         return response

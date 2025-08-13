@@ -8,7 +8,7 @@ register = template.Library()
 
 @register.simple_tag(takes_context=True)
 def is_autor(context, obj):
-    user = context["request"].user
+    user = context["request"].user  # siempre un User o AnonymousUser
     if not getattr(user, "is_authenticated", False):
         return False
     return getattr(obj, "autor", None) == user or getattr(user, "is_staff", False)
