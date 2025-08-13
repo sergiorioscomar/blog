@@ -55,8 +55,7 @@
         <!-- Menú usuario -->
         <div class="collapse navbar-collapse" id="userNavbar">
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    {% is_autor user as es_autor %}
-                    {% if es_autor %}
+                    {% if request.user.is_authenticated and request.user.is_staff %}
                         <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="notificacionesDropdown" role="button" data-bs-toggle="dropdown">
                             🔔 Notificaciones 
