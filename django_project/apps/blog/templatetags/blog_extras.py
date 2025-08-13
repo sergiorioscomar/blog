@@ -6,9 +6,9 @@ from django.contrib.auth.models import AnonymousUser
 
 register = template.Library()
 
-@register.simple_tag
-def is_autor(user):
-    """Devuelve True si el usuario pertenece al grupo Autor."""
-    if not user.is_authenticated:
+@register.simple_tag(takes_context=True)
+def is_autor(context, obj):
+    user = context["request"].user
+    if not getattr(user, "is_authenticated", False):
         return False
-    return user.is_superuser or user.groups.filter(name='Autor').exists()
+    return getattr(obj, "autor", None) == user or getattr(user, "is_staff", False)
