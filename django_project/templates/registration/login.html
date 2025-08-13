@@ -4,41 +4,47 @@
 {% load form_tags %}
 
 {% block content %}
-<div class="container" style="min-height: 85vh;">
+<div class="container py-5" style="min-height:85vh;">
   <div class="row align-items-center">
-    <!-- Columna de la imagen -->
-    <div class="col-md-6 d-none d-md-block p-5">
-      <div class="bg-image">
-        <img src="{% static 'img/login.png' %}" alt="Iniciar sesión" class="bg-imagen h-100 w-100 img-fluid" style="object-fit: cover;">
+
+    <!-- Imagen -->
+    <div class="col-md-6 d-none d-md-block p-0">
+      <div class="bg-image-login fade-left-white soft-zoom d-flex align-items-center justify-content-center">
+        <img src="{% static 'img/login.png' %}"
+             alt="Iniciar sesión"
+             class="img-fluid"
+             style="max-height:68vh; object-fit:contain;">
       </div>
     </div>
 
-    <!-- Columna del formulario -->
+    <!-- Formulario -->
     <div class="col-md-6 d-flex justify-content-center">
-      <div class="card shadow-lg border-0 my-5" style="max-width: 450px; width: 100%;">
-        <div class="card-body p-4">
+      <div class="card shadow-lg border-0 glass-card my-5" style="max-width:460px; width:100%;">
+        <div class="card-body p-4 p-md-5">
 
           {% if user.is_authenticated %}
-            <h3 class="card-title text-center mb-3">👋 Ya estás logueado</h3>
-            <p class="text-center">Hola, {{ user.username }}. Ya iniciaste sesión.</p>
+            <h3 class="text-center mb-3">👋 Ya estás logueado</h3>
+            <p class="text-center">Hola, {{ user.username }}.</p>
             <div class="text-center mt-3">
-              <a href="{% url 'post-list' %}" class="btn btn-success">Ir al Blog</a>
+              <a href="{% url 'post-list' %}" class="btn btn-success me-2">Ir al Blog</a>
               <a href="{% url 'logout' %}" class="btn btn-outline-danger">Cerrar sesión</a>
             </div>
-
           {% else %}
-            <h3 class="card-title text-center mb-3">🔐 Iniciar sesión</h3>
+
+            <div class="text-center mb-4">
+              <div class="badge bg-light text-dark rounded-pill px-3 py-2 mb-2">🔐 Acceso</div>
+              <h2 class="fw-semibold mb-1 text-uppercase" style="letter-spacing:.5px;">Iniciar sesión</h2>
+              <p class="text-muted small mb-0">Ingresá tus credenciales para continuar.</p>
+            </div>
 
             {% if form.non_field_errors %}
               <div class="alert alert-danger py-2">
                 <ul class="mb-0">
-                  {% for error in form.non_field_errors %}
-                    <li>{{ error }}</li>
-                  {% endfor %}
+                  {% for error in form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
                 </ul>
               </div>
             {% endif %}
-            
+
             <form method="post" novalidate>
               {% csrf_token %}
               {% for field in form %}
@@ -54,21 +60,37 @@
                 <i class="bi bi-box-arrow-in-right me-1"></i> Ingresar
               </button>
             </form>
-
-            <div class="text-center mt-3">
-              <small class="text-muted d-block">
-                ¿Olvidaste tu contraseña? <a href="{% url 'password_reset' %}">Recuperala</a>
-              </small>
-              <small class="text-muted">
-                ¿No tenés cuenta? <a href="{% url 'register' %}">Crear cuenta</a>
-              </small>
+            <div class="text-center mt-4 small text-muted">
+              ¿Olvidaste tu contraseña? <a href="{% url 'password_reset' %}">Recuperala</a>
             </div>
-          {% endif %}
+            <div class="text-center mt-4 small text-muted">
+              ¿No tenés cuenta? <a href="{% url 'register' %}">Crear cuenta</a>
+            </div>
 
+          {% endif %}
         </div>
       </div>
     </div>
 
   </div>
 </div>
+
+<!-- Toggle de contraseña (vanilla JS) -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const btn = document.getElementById('togglePass');
+  if (!btn) return;
+  btn.addEventListener('click', function () {
+    const input = btn.closest('.input-group').querySelector('input');
+    const icon = btn.querySelector('i');
+    if (input.type === 'password') {
+      input.type = 'text';
+      icon.classList.remove('bi-eye'); icon.classList.add('bi-eye-slash');
+    } else {
+      input.type = 'password';
+      icon.classList.remove('bi-eye-slash'); icon.classList.add('bi-eye');
+    }
+  });
+});
+</script>
 {% endblock %}
