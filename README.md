@@ -1,7 +1,7 @@
 # 📝 Blog en Django - "Grupo XIV noche"
 
 Proyecto **Blog en Django** desplegado en un **VPS con Docker** para produccion y **pythonanywhere** para desarrollo.  
-Este blog forma parte de los proyectos de **Informatorio chaco** comision 2, grupo:"Grupo XIV noche" y se encuentra disponible en:
+Este blog forma parte de los proyectos de **Informatorio chaco** comision 2, grupo:"Grupo XIV" y se encuentra disponible en:
 
 **🌐 Producción:** [http://esencialtic.com.ar:8000/blog](http://esencialtic.com.ar:8000/blog)
 
@@ -22,7 +22,8 @@ Este blog forma parte de los proyectos de **Informatorio chaco** comision 2, gru
 Estructura de acceso:
 
 ```
-http://esencialtic.com.ar:8000/blog
+https://serggiors.pythonanywhere.com/
+http://esencialtic.com.ar:8000/blog/
 ```
 
 > **Nota:** Actualmente el proyecto se expone en el puerto 8000.  
@@ -37,34 +38,6 @@ http://esencialtic.com.ar:8000/blog
 - `docker-compose.yml` → Orquesta los contenedores web y base de datos.
 - `.env` → Variables de entorno (ignorado en Git).
 - `.gitignore` → Ignora archivos sensibles, `.env`, volúmenes y datos locales.
-
----
-
-## 🐳 Comandos Docker Útiles
-
-Levantar el proyecto:
-
-```bash
-docker-compose up -d --build
-```
-
-Ver logs del contenedor web:
-
-```bash
-docker logs -f web
-```
-
-Ver logs de la base de datos:
-
-```bash
-docker logs -f db
-```
-
-Crear superusuario de Django:
-
-```bash
-docker exec -it web python manage.py createsuperuser
-```
 
 ---
 
@@ -91,39 +64,123 @@ Este proyecto cuenta con un **Project en GitHub** para registrar:
 
 ## 🛠️ Instrucciones para desarrolladores
 
-### 1️⃣ Levantar el proyecto en local
+## 🚀 Características
 
+### 📄 Contenido & UI
+- Posts con imagen destacada, categorías y destacados en portada  
+- Listado con paginación y navegación entre posts (prev / next)  
+- Imagen por defecto y degradados para mejorar legibilidad  
+- Toolbar reducida e idioma es-ES (Español)
+- Plantillas personalizadas de errores **404 / 403 / 500**   
+
+### 👤 Cuentas & Perfiles
+- Registro y login personalizados con **Bootstrap 5**  
+- Perfil de usuario con avatar (imagen por defecto si no se carga)  
+- Perfil público accesible por username o ID  
+- Recuperación de contraseña con envío de email  
+
+### 💬 Social & Engagement
+- Sistema de **likes** por usuario  
+- Sistema de **vistas** por post  
+- Sistema de **comentarios** con notificación en la toolbar y por email
+- Sistema de **mensajes privados internos** con notificación en la toolbar y por email  
+
+### 🛡️ Roles & Permisos
+- **Administrador**, **Autor**, **Usuario**  
+- Permisos diferenciados para crear, editar y publicar contenido  
+
+### ⚙️ Dev & Ops
+- Configuración vía **.env** (DB, email, etc.)  
+- **Docker** (Django + MySQL)  
+- Compatible con despliegue en **PythonAnywhere**  
+
+---
+
+## 📡 Endpoints API
+
+| Método | Ruta                   | Descripción                    |
+|-------:|------------------------|--------------------------------|
+| GET    | `/api/ultimos-posts/`  | Lista de últimos posts         | 
+| GET    | `/api/mas-vistos/`     | Lista por popularidad          | 
+
+---
+
+## 🗃️ Modelos principales
+
+- **Post**, **Categoria**, **Comment**  
+- **Profile** (OneToOne con `User`)  
+- **Message** (mensajes internos)  
+- *(Opcional)* `PostView`, `PostLike` para métricas  
+
+---
+
+## 🛠️ Stack Técnico
+- **Backend**: Django 5.x  
+- **Base de datos**: MySQL 8  
+- **Frontend**: Bootstrap 5
+- **Entorno**: Docker / docker-compose  
+- **Email**: SMTP (password reset, notificaciones)  
+
+---
+
+## 🔧 Instalación
+
+### Requisitos
+- Python 3.11+
+- MySQL 8
+- Docker (opcional)
+
+### Variables de entorno (`.env`)
+```env
+DEBUG=False
+SECRET_KEY=tu_clave_secreta
+ALLOWED_HOSTS=localhost,127.0.0.1,tudominio.com
+DATABASE_URL=mysql://usuario:clave@host:3306/nombre_bd
+EMAIL_HOST=smtp.tu-dominio.com
+EMAIL_PORT=587
+EMAIL_USE_TLS=True
+EMAIL_HOST_USER=info@tu-dominio.com
+EMAIL_HOST_PASSWORD=********
+DEFAULT_FROM_EMAIL=info@tu-dominio.com
+```
+
+### Instalación local
 ```bash
-git clone git@github.com:sergiorioscomar/blog.git
-cd blog
-docker-compose up -d --build
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py createsuperuser
+python manage.py runserver
 ```
 
-El proyecto quedará disponible en:
-
-```
-http://localhost:8000/blog
-```
-
-### 2️⃣ Conectarse a la base de datos MySQL del contenedor
-
+### Instalación con Docker
 ```bash
-docker exec -it db mysql -u root -p
-# Contraseña: passroot
-#Recordar agregar la configuracion en blog/django_project/config/settings/local o en .env con variables de entorno privadas.
+docker compose up -d --build
+docker compose exec web python manage.py migrate
+docker compose exec web python manage.py createsuperuser
 ```
 
-### 3️⃣ Ejecutar migraciones
+## 📬 Flujo de notificaciones
 
-```bash
-docker exec -it web python manage.py migrate
-```
+- **Comentarios** → email al autor del post  
+- **Mensajes privados** → badge en toolbar + email al receptor  
+- **Recuperar contraseña** → email con enlace temporal  
 
-### 4️⃣ Crear superusuario
+---
 
-```bash
-docker exec -it web python manage.py createsuperuser
-```
+## 🔑 Roles y permisos
+
+| Acción                                       | Admin | Autor | Usuario  |
+|--------------------------------------------- |:-----:|:------:|:-------:|
+| Crear/editar posts propios                   | ✅    | ✅    | ❌     |
+| Publicar posts                               | ✅    | ✅    | ❌     |
+| Comentar                                     | ✅    | ✅    | ✅     |
+| Editar y eliminar comentario                 | ✅    | ✅    | ✅     |
+| Enviar mensajes privados                     | ✅    | ✅    | ❌     |
+| Administrar grupos y perfiles                | ✅    | ❌    | ❌     |
+| Editar y eliminar post de otro usuario       | ✅    | ❌    | ❌     |
+| Editar y eliminar comentario de otro usuario | ✅    | ❌    | ❌     |
 
 ---
 
@@ -144,6 +201,7 @@ docker exec -it web python manage.py createsuperuser
 **Jose Audicio**
 
 📧 Contacto: [info@esencialtic.com.ar](mailto:info@esencialtic.com.ar)
+📧 Contacto sergio: [sergio@esencialtic.com.ar](mailto:sergio@esencialtic.com.ar)
 
 ---
 
@@ -153,3 +211,9 @@ docker exec -it web python manage.py createsuperuser
 - [ ] Implementar HTTPS con Certbot.  
 - [ ] Automatizar despliegue de ramas `main` y `dev` con GitHub Actions.  
 - [ ] Mejorar documentación interna en `/docs`.
+
+## 📜 Changelog
+
+Ver el [Historial de cambios](CHANGELOG.md) para detalles cronológicos de mejoras e implementaciones.
+
+---
