@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block titulo %}Blog esencialtic{% endblock %}</title>
     {% load static %}
-    {% load blog_extras %}
+    {% load form_tags %}
+    {% load blog_perms %}
     <!-- Bootswatch Lux CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/lux/bootstrap.min.css">
     <!-- css personalizado -->
@@ -55,7 +56,8 @@
         <!-- Menú usuario -->
         <div class="collapse navbar-collapse" id="userNavbar">
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    {% if request.user.is_authenticated and request.user.is_staff %}
+                    {% is_author_or_super as puede_ver %}
+                    {% if puede_ver %}
                         <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="notificacionesDropdown" role="button" data-bs-toggle="dropdown">
                             🔔 Notificaciones 

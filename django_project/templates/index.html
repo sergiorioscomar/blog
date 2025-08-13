@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block titulo %}Blog esencialtic{% endblock %}</title>
     {% load static %}
-    {% load blog_extras %}
     <!-- Bootswatch Lux CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/lux/bootstrap.min.css">
     <!-- css personalizado -->
@@ -50,35 +49,7 @@
         <!-- Menú usuario -->
         <div class="collapse navbar-collapse" id="userNavbar">
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    {% if request.user.is_authenticated and request.user.is_staff %}
-                        <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="notificacionesDropdown" role="button" data-bs-toggle="dropdown">
-                            🔔 Notificaciones 
-                            {% if notificaciones_no_leidas %}
-                                <span class="badge bg-danger">{{ notificaciones_no_leidas|length }}</span>
-                            {% endif %}
-                        </a>
-                        <ul class="dropdown-menu">
-                            {% for n in notificaciones_no_leidas %}
-                                {% if n.mensaje_privado %}
-                                    <li>
-                                        <a class="dropdown-item" href="{% url 'detalle_mensaje' n.mensaje_privado.id %}">
-                                            {{ n.mensaje }}
-                                        </a>
-                                    </li>
-                                {% else %}
-                                    <li><span class="dropdown-item text-muted">{{ n.mensaje }}</span></li>
-                                {% endif %}
-                            {% empty %}
-                                <li><span class="dropdown-item text-muted">Sin notificaciones</span></li>
-                            {% endfor %}
-                        </ul>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'post-create' %}">➕ Nuevo Post</a></li>
-                        <li class="nav-item"><a href="{% url 'dashboard' %}" class="nav-link">📊 Panel</a></li>
-                    {% endif %}
-                    {% if user.is_authenticated %}
-
-
+                {% if user.is_authenticated %}
                     <li class="nav-item"><a href="{% url 'profile_edit' %}" class="nav-link"><strong>Hola, {{ user.username }} 👋</strong></a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">🚪 Salir</a></li>
                 {% else %}
