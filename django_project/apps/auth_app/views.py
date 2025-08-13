@@ -7,8 +7,6 @@ from .forms import CustomUserCreationForm
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.contrib.sites.shortcuts import get_current_site
-from .forms import CustomAuthenticationForm
-from django.contrib.auth.views import LoginView
 
 # username / email y password
 
@@ -48,8 +46,3 @@ class RegisterView(CreateView):
             msg.send(fail_silently=False)
 
         return response
-
-class CustomLoginView(LoginView):
-    template_name = "registration/login.html"
-    authentication_form = CustomAuthenticationForm
-    redirect_authenticated_user = True
