@@ -24,9 +24,6 @@ https://serggiors.pythonanywhere.com/
 https://blog.esencialtic.com.ar/blog/
 ```
 
-> **Nota:** Actualmente el proyecto se expone en el puerto 8000.  
-> Se prevé configurar Nginx para acceder sin el puerto en el futuro.
-
 ---
 
 ## 📂 Estructura del Proyecto
