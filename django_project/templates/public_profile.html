@@ -5,38 +5,77 @@
 
 {% block content %}
 <div class="container py-4" style="max-width: 760px;">
-  <div class="card shadow-sm border-0">
+  <!-- Tarjeta de perfil -->
+  <div class="card shadow-sm border-0 mb-4">
     <div class="card-body d-flex gap-3 align-items-center">
-
       <img
         class="rounded-circle"
         style="width: 96px; height: 96px; object-fit: cover;"
         alt="Avatar"
-        src="{% if object.profile and object.profile.avatar %}{{ object.profile.avatar.url }}{% else %}{% static 'img/avatar-default.png' %}{% endif %}"
+        src="{% if profile_user.profile and profile_user.profile.avatar %}{{ profile_user.profile.avatar.url }}{% else %}{% static 'img/avatar-default.png' %}{% endif %}"
       />
 
       <div>
-        <h3 class="mb-1">{{ object.get_full_name|default:object.username }}</h3>
-        <div class="text-muted">@{{ object.username }}</div>
+        <h3 class="mb-1">{{ profile_user.get_full_name|default:profile_user.username }}</h3>
+        <div class="text-muted">@{{ profile_user.username }}</div>
 
-        {% if object.profile and object.profile.bio %}
-          <p class="mt-2 mb-0">{{ object.profile.bio }}</p>
+        {% if profile_user.profile and profile_user.profile.bio %}
+          <p class="mt-2 mb-0">{{ profile_user.profile.bio }}</p>
         {% endif %}
 
         <div class="mt-2 d-flex flex-wrap gap-3">
-          {% if object.profile and object.profile.website %}
-            <a href="{{ object.profile.website }}" target="_blank" rel="noopener">🌐 Sitio</a>
+          {% if profile_user.profile and profile_user.profile.website %}
+            <a href="{{ profile_user.profile.website }}" target="_blank" rel="noopener">🌐 Sitio</a>
           {% endif %}
-          {% if object.profile and object.profile.github %}
-            <a href="{{ object.profile.github }}" target="_blank" rel="noopener">🐙 GitHub</a>
+          {% if profile_user.profile and profile_user.profile.github %}
+            <a href="{{ profile_user.profile.github }}" target="_blank" rel="noopener">🐙 GitHub</a>
           {% endif %}
-          {% if object.profile and object.profile.linkedin %}
-            <a href="{{ object.profile.linkedin }}" target="_blank" rel="noopener">🔗 LinkedIn</a>
+          {% if profile_user.profile and profile_user.profile.linkedin %}
+            <a href="{{ profile_user.profile.linkedin }}" target="_blank" rel="noopener">🔗 LinkedIn</a>
           {% endif %}
         </div>
       </div>
-
     </div>
   </div>
+
+  <!-- Publicaciones -->
+  <h4 class="mb-3">
+    Publicaciones de {{ profile_user.username }}
+    <small class="text-muted">({{ total_posts }})</small>
+  </h4>
+
+  {% if page_obj.object_list %}
+    <div class="list-group mb-3">
+      {% for post in page_obj.object_list %}
+        <a href="{% url 'post-detail' post.pk %}" class="list-group-item list-group-item-action">
+          <h5 class="mb-1">{{ post.titulo }}</h5>
+          <small class="text-muted">Publicado el {{ post.fecha_creacion|date:"d/m/Y" }}</small>
+        </a>
+      {% endfor %}
+    </div>
+
+    {% if is_paginated %}
+      <nav aria-label="Paginación publicaciones">
+        <ul class="pagination mb-0">
+          <li class="page-item {% if not page_obj.has_previous %}disabled{% endif %}">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}" tabindex="-1">Anterior</a>
+          </li>
+
+          {# páginas numeradas (opcional simple) #}
+          {% for num in paginator.page_range %}
+            <li class="page-item {% if num == page_obj.number %}active{% endif %}">
+              <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+            </li>
+          {% endfor %}
+
+          <li class="page-item {% if not page_obj.has_next %}disabled{% endif %}">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+          </li>
+        </ul>
+      </nav>
+    {% endif %}
+  {% else %}
+    <p class="text-muted">Este usuario no tiene publicaciones todavía.</p>
+  {% endif %}
 </div>
 {% endblock %}

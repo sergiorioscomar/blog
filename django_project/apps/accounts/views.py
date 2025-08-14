@@ -4,9 +4,10 @@ from django.contrib.auth import get_user_model
 from django.views.generic import TemplateView, View,DetailView
 from django.shortcuts import render, redirect
 from django.db.models import Count, Sum
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator,EmptyPage, PageNotAnInteger
 from apps.blog.models import Post, Comentario
 from .forms import UserForm, ProfileForm
+from django.contrib.auth.models import User
 
 User = get_user_model()
 
@@ -80,5 +81,34 @@ class PublicProfileView(DetailView):
     context_object_name = "profile_user"
 
     def get_queryset(self):
-        # Trae el profile de una (avatar, urls, etc.)
         return User.objects.select_related("profile")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        usuario = self.object 
+
+        # Query base de publicaciones del usuario
+        posts_qs = (
+            Post.objects
+            .filter(autor=usuario)
+            .order_by("-fecha_creacion")
+            .select_related("autor")
+        )
+
+        # Paginación (5 por página)
+        paginator = Paginator(posts_qs, 5)
+        page_number = self.request.GET.get("page", 1)
+        try:
+            page_obj = paginator.page(page_number)
+        except PageNotAnInteger:
+            page_obj = paginator.page(1)
+        except EmptyPage:
+            page_obj = paginator.page(paginator.num_pages)
+
+        # Contexto estándar de listas
+        context["page_obj"] = page_obj
+        context["paginator"] = paginator
+        context["is_paginated"] = page_obj.has_other_pages()
+        context["posts_page"] = page_obj 
+        context["total_posts"] = paginator.count
+        return context

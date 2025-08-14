@@ -31,7 +31,7 @@ LOCAL_APPS = [
 
 THIRD_APPS = [
     # aplicaciones importadas de terceros
-
+    'django_summernote',
 ]
 
 INSTALLED_APPS = BASE_APPS + LOCAL_APPS + THIRD_APPS
