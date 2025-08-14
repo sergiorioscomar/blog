@@ -3,7 +3,7 @@
 Proyecto **Blog en Django** desplegado en un **VPS con Docker** para produccion y **pythonanywhere** para desarrollo.  
 Este blog forma parte de los proyectos de **Informatorio chaco** comision 2, grupo:"Grupo XIV" y se encuentra disponible en:
 
-**🌐 Producción:** [http://esencialtic.com.ar:8000/blog](http://esencialtic.com.ar:8000/blog)
+**🌐 Producción:** [https://blog.esencialtic.com.ar/blog](https://blog.esencialtic.com.ar/blog)
 
 **🌐 Desarrollo:** [https://serggiors.pythonanywhere.com/blog/](https://serggiors.pythonanywhere.com/blog)
 
@@ -23,7 +23,7 @@ Estructura de acceso:
 
 ```
 https://serggiors.pythonanywhere.com/
-http://esencialtic.com.ar:8000/blog/
+https://blog.esencialtic.com.ar/blog/
 ```
 
 > **Nota:** Actualmente el proyecto se expone en el puerto 8000.  
