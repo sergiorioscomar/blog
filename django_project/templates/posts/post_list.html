@@ -36,7 +36,7 @@
 
 <div class="container my-5">
 
-  {# ======= Destacado ======= #}
+  {# ======= Destacado / Últimas noticias ======= #}
   <div class="pb-5">
     {% if featured or latest %}
     <h3 class="text-center mb-4">Últimas noticias</h3>
@@ -61,9 +61,15 @@
                 <a class="text-decoration-none" href="{% url 'post-detail' featured.id %}">{{ featured.titulo }}</a>
               </h4>
               <p class="text-muted">{{ featured.contenido|striptags|truncatechars:220 }}</p>
-              <div class="small text-muted">
-                Por <a href="{% url 'public_profile' username=featured.autor.username %}">{{ featured.autor.username }}</a>
-                · {{ featured.fecha_creacion|date:"d/m/Y" }}
+              <div class="d-flex align-items-center gap-2 small text-muted">
+                <span>Por</span>
+                {% if featured.autor.profile.avatar %}
+                  <img src="{{ featured.autor.profile.avatar.url }}" class="rounded-circle" width="20" height="20" alt="">
+                {% else %}
+                  <img src="{% static 'img/avatar-default.png' %}" class="rounded-circle" width="20" height="20" alt="">
+                {% endif %}
+                <a href="{% url 'public_profile' username=featured.autor.username %}">{{ featured.autor.username }}</a>
+                <span>· {{ featured.fecha_creacion|date:"d/m/Y" }}</span>
               </div>
             </div>
           </div>
@@ -76,9 +82,9 @@
             <div class="col-md-5">
               <a href="{% url 'post-detail' p.id %}">
                 {% if p.imagen %}
-                  <img src="{{ p.imagen.url }}" class="img-fluid rounded-4 shadow-sm" alt="{{ p.titulo }}">
+                  <img src="{{ p.imagen.url }}" class="card-img-top rounded-top-4" alt="{{ p.titulo }}">
                 {% else %}
-                  <img src="{% static 'img/default-post.jpg' %}" class="img-fluid rounded-4 shadow-sm" alt="{{ p.titulo }}">
+                  <img src="{% static 'img/default-post.jpg' %}" class="card-img-top rounded-top-4" alt="{{ p.titulo }}">
                 {% endif %}
               </a>
             </div>
@@ -87,9 +93,15 @@
                 <a class="text-decoration-none" href="{% url 'post-detail' p.id %}">{{ p.titulo }}</a>
               </h4>
               <p class="text-muted">{{ p.contenido|striptags|truncatechars:220 }}</p>
-              <div class="small text-muted">
-                Por <a href="{% url 'public_profile' username=p.autor.username %}">{{ p.autor.username }}</a>
-                · {{ p.fecha_creacion|date:"d/m/Y" }}
+              <div class="d-flex align-items-center gap-2 small text-muted">
+                {% if p.autor.profile.avatar %}
+                  <img src="{{ p.autor.profile.avatar.url }}" class="rounded-circle" width="20" height="20" alt="">
+                {% else %}
+                  <img src="{% static 'img/avatar-default.png' %}" class="rounded-circle" width="20" height="20" alt="">
+                {% endif %}
+                <span>Por</span>
+                <a href="{% url 'public_profile' username=p.autor.username %}">{{ p.autor.username }}</a>
+                <span>· {{ p.fecha_creacion|date:"d/m/Y" }}</span>
               </div>
             </div>
           </div>
@@ -149,6 +161,7 @@
       </div>
     {% endif %}
   </div>
+
   {# ======= Listado general, evitando repetir el destacado en la página 1 ======= #}
   <h5 class="text-center mb-3">Todas las publicaciones</h5>
   <div class="row g-4 mb-5">
@@ -163,13 +176,17 @@
           {% endif %}
           <div class="card-body">
             <h5 class="card-title">{{ post.titulo }}</h5>
-            <p class="card-text text-muted mb-2">
-              Publicado el {{ post.fecha_creacion|date:"d/m/Y" }}
-              por
+            <div class="d-flex align-items-center gap-2 small text-muted mb-2">
+              <span>Publicado el {{ post.fecha_creacion|date:"d/m/Y" }} por</span>
+              {% if post.autor.profile.avatar %}
+                <img src="{{ post.autor.profile.avatar.url }}" class="rounded-circle" width="20" height="20" alt="">
+              {% else %}
+                <img src="{% static 'img/avatar-default.png' %}" class="rounded-circle" width="20" height="20" alt="">
+              {% endif %}
               <a href="{% url 'public_profile' username=post.autor.username %}">
                 <strong>{{ post.autor.username }}</strong>
               </a>
-            </p>
+            </div>
             <p class="card-text">{{ post.contenido|truncatechars:150 }}</p>
             <a href="{% url 'post-detail' post.id %}" class="btn btn-primary btn-sm">Ver más</a>
           </div>
@@ -182,6 +199,7 @@
     </div>
   {% endfor %}
   </div>
+
   {# ======= Paginación ======= #}
   {% if is_paginated %}
     <nav>

@@ -19,9 +19,18 @@
                     Publicado por <strong>{{ posts.autor }}</strong> el {{ posts.fecha_creacion|date:"d/m/Y H:i" }}
                 </p>
                 {# autor de un post #}-->
-                <p class="text-muted text-center mb-2">
-                    Publicado por <strong><a href="{% url 'public_profile' username=posts.autor.username %}">{{ posts.autor.username }}</a></strong> el {{ posts.fecha_creacion|date:"d/m/Y H:i" }}
-                </p>
+                <div class="d-flex justify-content-center align-items-center gap-2 text-muted mb-2">
+                <span>Publicado por</span>
+                {% if posts.autor.profile.avatar %}
+                    <img src="{{ posts.autor.profile.avatar.url }}" class="rounded-circle" width="24" height="24" alt="">
+                {% else %}
+                    <img src="{% static 'img/avatar-default.png' %}" class="rounded-circle" width="24" height="24" alt="">
+                {% endif %}
+                <strong>
+                    <a href="{% url 'public_profile' username=posts.autor.username %}">{{ posts.autor.username }}</a>
+                </strong>
+                <span>el {{ posts.fecha_creacion|date:"d/m/Y H:i" }}</span>
+            </div>
                 <hr>
                 <p class="card-text fs-5">{{ posts.contenido|linebreaks }}</p>
                 <div class="text-center mt-3" id="likes">
