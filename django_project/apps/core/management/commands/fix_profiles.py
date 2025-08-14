@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
-from apps.tu_app_perfiles.models import Profile  # ajusta al nombre real de tu app
+from apps.accounts.models import Profile
 
 class Command(BaseCommand):
     help = "Crea perfiles que falten para usuarios existentes (por ejemplo, admin antiguos)."
