@@ -102,10 +102,10 @@ Este proyecto cuenta con un **Project en GitHub** para registrar:
 
 ## 🗃️ Modelos principales
 
-- **Post**, **Categoria**, **Comment**  
+- **Post**, **Categoria**, **Comentario**  
 - **Profile** (OneToOne con `User`)  
-- **Message** (mensajes internos)  
-- *(Opcional)* `PostView`, `PostLike` para métricas  
+- **Mensaje** (mensajes internos)  
+- **Notificacion** (notificaciones)
 
 ---
 
