@@ -16,8 +16,6 @@ Este blog forma parte de los proyectos de **Informatorio chaco** comision 2, gru
 - **Servidor:** VPS propio  
 - **Servidor Desarrollo:** Pythonanywhere
 - **Contenedores:** Docker Compose  
-- **Puerto de acceso:** `8000`  
-- **Puerto de acceso:** `3001` (Base de datos) 
 
 Estructura de acceso:
 
@@ -118,7 +116,7 @@ Este proyecto cuenta con un **Project en GitHub** para registrar:
 - **Backend**: Django 5.x  
 - **Base de datos**: MySQL 8  
 - **Frontend**: Bootstrap 5
-- **Entorno**: Docker / docker-compose  
+- **Entorno**: Docker / docker-compose  | Pythonanywhere
 - **Email**: SMTP (password reset, notificaciones)  
 
 ---
@@ -152,6 +150,8 @@ pip install -r requirements.txt
 python manage.py migrate
 python manage.py createsuperuser
 python manage.py runserver
+python manage.py setup_roles.py (Configurar grupos)
+python manage.py promover_autor.py (Asignar permisos al usuario por consola)
 ```
 
 ### Instalación con Docker
@@ -207,8 +207,6 @@ docker compose exec web python manage.py createsuperuser
 
 ## ✅ Próximos pasos
 
-- [ ] Configurar Nginx para acceder sin el puerto 8000.  
-- [ ] Implementar HTTPS con Certbot.  
 - [ ] Automatizar despliegue de ramas `main` y `dev` con GitHub Actions.  
 - [ ] Mejorar documentación interna en `/docs`.
 
