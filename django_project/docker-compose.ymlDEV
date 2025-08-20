@@ -1,0 +1,32 @@
+version: "3"
+
+services:
+
+  db:
+    image: mysql:8.0
+    container_name: db
+    restart: always
+    ports:
+      - "3001:3306"  # acceso desde el host por 3001
+    environment:
+      MYSQL_DATABASE: blog_db
+      MYSQL_USER: blog_user
+      MYSQL_PASSWORD: blog_P455
+      MYSQL_ROOT_PASSWORD: r00tp455
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  web:
+    build: .
+    env_file:
+      - .env
+    depends_on:
+    - db
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    command: python manage.py runserver 0.0.0.0:8000
+
+volumes:
+  mysql_data:
