@@ -3,7 +3,7 @@
 Proyecto **Blog en Django** desplegado en un **VPS con Docker** para produccion y **pythonanywhere** para desarrollo.  
 Este blog forma parte de los proyectos de **Informatorio chaco** comision 2, grupo:"Grupo XIV" y se encuentra disponible en:
 
-**🌐 Producción:** [http://esencialtic.com.ar:8000/blog](http://esencialtic.com.ar:8000/blog)
+**🌐 Producción:** [https://blog.esencialtic.com.ar/blog](https://blog.esencialtic.com.ar/blog)
 
 **🌐 Desarrollo:** [https://serggiors.pythonanywhere.com/blog/](https://serggiors.pythonanywhere.com/blog)
 
@@ -16,18 +16,13 @@ Este blog forma parte de los proyectos de **Informatorio chaco** comision 2, gru
 - **Servidor:** VPS propio  
 - **Servidor Desarrollo:** Pythonanywhere
 - **Contenedores:** Docker Compose  
-- **Puerto de acceso:** `8000`  
-- **Puerto de acceso:** `3001` (Base de datos) 
 
 Estructura de acceso:
 
 ```
 https://serggiors.pythonanywhere.com/
-http://esencialtic.com.ar:8000/blog/
+https://blog.esencialtic.com.ar/blog/
 ```
-
-> **Nota:** Actualmente el proyecto se expone en el puerto 8000.  
-> Se prevé configurar Nginx para acceder sin el puerto en el futuro.
 
 ---
 
@@ -107,10 +102,10 @@ Este proyecto cuenta con un **Project en GitHub** para registrar:
 
 ## 🗃️ Modelos principales
 
-- **Post**, **Categoria**, **Comment**  
+- **Post**, **Categoria**, **Comentario**  
 - **Profile** (OneToOne con `User`)  
-- **Message** (mensajes internos)  
-- *(Opcional)* `PostView`, `PostLike` para métricas  
+- **Mensaje** (mensajes internos)  
+- **Notificacion** (notificaciones)
 
 ---
 
@@ -118,7 +113,7 @@ Este proyecto cuenta con un **Project en GitHub** para registrar:
 - **Backend**: Django 5.x  
 - **Base de datos**: MySQL 8  
 - **Frontend**: Bootstrap 5
-- **Entorno**: Docker / docker-compose  
+- **Entorno**: Docker / docker-compose  | Pythonanywhere
 - **Email**: SMTP (password reset, notificaciones)  
 
 ---
@@ -152,6 +147,8 @@ pip install -r requirements.txt
 python manage.py migrate
 python manage.py createsuperuser
 python manage.py runserver
+python manage.py setup_roles.py (Configurar grupos)
+python manage.py promover_autor.py (Asignar permisos al usuario por consola)
 ```
 
 ### Instalación con Docker
@@ -207,8 +204,6 @@ docker compose exec web python manage.py createsuperuser
 
 ## ✅ Próximos pasos
 
-- [ ] Configurar Nginx para acceder sin el puerto 8000.  
-- [ ] Implementar HTTPS con Certbot.  
 - [ ] Automatizar despliegue de ramas `main` y `dev` con GitHub Actions.  
 - [ ] Mejorar documentación interna en `/docs`.
 
