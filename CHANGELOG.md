@@ -73,3 +73,15 @@ Historial cronológico de implementaciones y mejoras.
 ### 📆 13 de agosto
 - Toolbar reducido, idioma español django.
 - Ajuste de tamaños de letra para títulos y fechas en navegación de posts.
+- Mejoras perfil publico del autor.
+
+### 📆 14 de agosto
+- Desplegar en desarrollo la version BETA y pasar a la rama DEV al proyecto.
+- Desplegar en produccion la version BETA. (rama main del proyecto).
+- Muestra del proyecto.
+
+### 📆 15 de agosto
+- Video presentación.
+
+### 📆 16 de agosto
+- Entrega proyecto.
