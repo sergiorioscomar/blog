@@ -204,7 +204,7 @@ docker compose exec web python manage.py createsuperuser
 
 ## ✅ Próximos pasos
 
-- [ ] Automatizar despliegue de ramas `main` y `dev` con GitHub Actions.  
+- [✅] Automatizar despliegue de ramas `main` con GitHub Actions.  
 - [ ] Mejorar documentación interna en `/docs`.
 
 ## 📜 Changelog
