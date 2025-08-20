@@ -17,7 +17,7 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
-            cd /home/admin/domains/esencialtic.com.ar/public_html/blog
+            cd /home/admin/domains/esencialtic.com.ar/public_html/blog/django_project
             git pull
             docker-compose down
             docker-compose build
